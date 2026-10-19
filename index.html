@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Votação de ideias · JUNITEC</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Base */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #175FAA;
+    color: #F6F6F6;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    line-height: 1.45;
+  }
+  .pagina { max-width: 1100px; margin: 0 auto; padding: 32px 16px 24px; }
+
+  /* Cabeçalho */
+  h1 { font-weight: 700; font-size: 2rem; margin: 0; }
+  .barra { width: 120px; height: 6px; border-radius: 3px; background: #74D1EF; margin: 12px 0 16px; }
+  .intro { color: #E2EEFF; margin: 0 0 24px; max-width: 680px; }
+
+  /* Botões */
+  button {
+    font-family: inherit; font-size: .9rem; font-weight: 600;
+    border-radius: 8px; border: 1px solid transparent; padding: 10px 16px;
+    cursor: pointer; box-shadow: none;
+  }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-principal { background: #74D1EF; color: #0944A1; }
+  .btn-principal:hover:not(:disabled) { background: #8FDBF3; }
+  .btn-contorno { background: transparent; color: #F6F6F6; border-color: #4D85C2; }
+  .btn-contorno:hover { background: #1E6BBB; }
+  .btn-claro { background: #175FAA; color: #F6F6F6; }
+  .btn-claro:hover { background: #0944A1; }
+  .btn-remover { background: transparent; color: #3D4F6B; padding: 6px 10px; font-size: 1.1rem; line-height: 1; }
+  .btn-remover:hover { color: #175FAA; background: #E2EEFF; }
+  .btn-voto { background: #E2EEFF; color: #0944A1; width: 36px; height: 36px; padding: 0; font-size: 1.2rem; }
+  .btn-voto:hover:not(:disabled) { background: #C9DAEE; }
+
+  /* Resultado */
+  .resultado { border: 1px solid #4D85C2; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+  .resultado .rotulo { font-size: .8rem; font-weight: 600; color: #E2EEFF; text-transform: uppercase; letter-spacing: .05em; }
+  .vencedora { font-size: 1.6rem; font-weight: 800; color: #74D1EF; margin: 4px 0; line-height: 1.2; }
+  .vencedora-votos { color: #E2EEFF; font-size: .9rem; margin: 0 0 16px; }
+  .ranking { list-style: none; margin: 0; padding: 0; }
+  .ranking li { display: grid; grid-template-columns: 28px 1fr 2fr 40px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid #4D85C2; font-size: .9rem; }
+  .ranking .pos { font-weight: 700; color: #E2EEFF; }
+  .ranking .trilho { height: 10px; background: #1E6BBB; border-radius: 5px; overflow: hidden; }
+  .ranking .enchimento { height: 100%; background: #74D1EF; border-radius: 5px; }
+  .ranking .num { text-align: right; font-weight: 700; color: #74D1EF; }
+  .escondido { color: #E2EEFF; font-size: .9rem; margin: 8px 0 0; }
+
+  /* Cartões */
+  .grelha { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cartao { background: #F6F6F6; color: #3D4F6B; border-radius: 12px; padding: 20px; }
+  .cartao h2 { color: #175FAA; font-weight: 700; font-size: 1.15rem; margin: 0 0 4px; }
+  .cartao .sub { font-size: .8rem; margin: 0 0 12px; }
+  .cartao + .cartao { margin-top: 16px; }
+  .coluna { display: flex; flex-direction: column; }
+
+  input, select {
+    font-family: inherit; font-size: .9rem; color: #3D4F6B;
+    width: 100%; padding: 9px 10px; border-radius: 8px;
+    border: 1px solid #C9DAEE; background: #FFFFFF;
+  }
+  input:focus, select:focus { outline: 2px solid #74D1EF; outline-offset: 1px; }
+  .acrescentar { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 12px; }
+  .lista { list-style: none; margin: 0; padding: 0; }
+  .lista li { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid #C9DAEE; font-size: .9rem; }
+  .vazio { font-size: .85rem; font-style: italic; padding: 8px 0; }
+  .linha-config { display: grid; grid-template-columns: 1fr 90px; gap: 8px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
+
+  /* Votar */
+  .votante { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .restam { font-weight: 700; color: #175FAA; white-space: nowrap; }
+  .boletim li { grid-template-columns: 1fr auto; }
+  .contador { display: flex; align-items: center; gap: 8px; }
+  .contador .meus { min-width: 22px; text-align: center; font-weight: 700; color: #175FAA; }
+  .opcao { display: flex; gap: 8px; align-items: center; font-size: .85rem; margin-top: 12px; }
+  .opcao input { width: auto; }
+
+  /* Acções */
+  .accoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .aviso { font-size: .8rem; color: #E2EEFF; margin-top: 12px; }
+  .feedback { font-size: .85rem; color: #74D1EF; font-weight: 600; align-self: center; }
+
+  /* Rodapé */
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #4D85C2; font-size: 12px; color: #E2EEFF; }
+
+  /* Telemóvel: tudo em coluna */
+  @media (max-width: 640px) {
+    h1 { font-size: 1.6rem; }
+    .grelha { grid-template-columns: 1fr; }
+    .ranking li { grid-template-columns: 24px 1fr 40px; }
+    .ranking .trilho { display: none; }
+    .vencedora { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="pagina">
+
+  <header>
+    <h1>Votação de ideias</h1>
+    <div class="barra"></div>
+    <p class="intro">Para equipas da JUNITEC escolherem as melhores ideias depois de um brainstorm. Juntem as ideias, cada pessoa distribui os seus votos e vejam o ranking.</p>
+  </header>
+
+  <section class="resultado" aria-live="polite">
+    <div class="rotulo">Ideia mais votada</div>
+    <div class="vencedora" id="vencedora"></div>
+    <p class="vencedora-votos" id="vencedora-votos"></p>
+    <ol class="ranking" id="ranking"></ol>
+    <p class="escondido" id="escondido" hidden>Os totais estão escondidos até ao fim da votação, para ninguém ser influenciado.</p>
+  </section>
+
+  <section class="grelha">
+    <div class="coluna">
+      <div class="cartao">
+        <h2>1. Ideias</h2>
+        <p class="sub">Escrevam cada ideia do brainstorm numa frase.</p>
+        <form class="acrescentar" id="form-ideia">
+          <input id="nova-ideia" placeholder="Ex.: Workshop de IA para PME" aria-label="Nova ideia">
+          <button class="btn-claro" type="submit">Acrescentar</button>
+        </form>
+        <ul class="lista" id="lista-ideias"></ul>
+      </div>
+      <div class="cartao">
+        <h2>2. Pessoas</h2>
+        <p class="sub">Quem vota e quantos votos tem cada um.</p>
+        <label class="linha-config">Votos por pessoa
+          <input id="votos-por-pessoa" type="number" min="1" max="20">
+        </label>
+        <form class="acrescentar" id="form-pessoa">
+          <input id="nova-pessoa" placeholder="Ex.: Ana" aria-label="Nova pessoa">
+          <button class="btn-claro" type="submit">Acrescentar</button>
+        </form>
+        <ul class="lista" id="lista-pessoas"></ul>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <h2>3. Votar</h2>
+      <p class="sub">Escolham quem está a votar. Podem pôr mais de um voto na mesma ideia.</p>
+      <div class="votante">
+        <select id="votante" aria-label="Quem está a votar"></select>
+        <span class="restam" id="restam"></span>
+      </div>
+      <ul class="lista boletim" id="boletim"></ul>
+      <label class="opcao"><input type="checkbox" id="esconder"> Esconder os totais até toda a gente votar</label>
+    </div>
+  </section>
+
+  <div class="accoes">
+    <button class="btn-principal" id="copiar">Copiar resultado</button>
+    <button class="btn-contorno" id="csv">Exportar CSV</button>
+    <button class="btn-contorno" id="nova-votacao">Nova votação</button>
+    <button class="btn-contorno" id="exemplo">Repor exemplo</button>
+    <button class="btn-contorno" id="limpar">Limpar tudo</button>
+    <span class="feedback" id="feedback"></span>
+  </div>
+  <p class="aviso">A votação fica guardada só neste browser (localStorage). Nada é enviado para nenhum servidor: usem um só computador ou ecrã partilhado.</p>
+
+  <footer>Feito pela JUNITEC</footer>
+</div>
+
+<script>
+// ---------- Estado ----------
+const CHAVE = 'junitec-votacao-ideias';
+
+function novoId() {
+  return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// Exemplo com dados fictícios, para a app não abrir vazia
+function criarExemplo() {
+  return {
+    votosPorPessoa: 3,
+    esconder: false,
+    votanteAtual: 'p1',
+    ideias: [
+      { id: 'a', texto: 'Workshop de IA para PME (exemplo)' },
+      { id: 'b', texto: 'Newsletter mensal de inovação (exemplo)' },
+      { id: 'c', texto: 'Hackathon com uma empresa parceira (exemplo)' },
+      { id: 'd', texto: 'Podcast com alumni (exemplo)' }
+    ],
+    pessoas: [
+      { id: 'p1', nome: 'Pessoa A' },
+      { id: 'p2', nome: 'Pessoa B' },
+      { id: 'p3', nome: 'Pessoa C' }
+    ],
+    votos: {
+      p1: { a: 2, c: 1 },
+      p2: { c: 2, d: 1 },
+      p3: { a: 1 }
+    }
+  };
+}
+
+function criarVazio() {
+  return { votosPorPessoa: 3, esconder: false, votanteAtual: '', ideias: [], pessoas: [], votos: {} };
+}
+
+let estado = carregar();
+
+function carregar() {
+  try {
+    const guardado = JSON.parse(localStorage.getItem(CHAVE));
+    if (guardado && Array.isArray(guardado.ideias)) return guardado;
+  } catch (e) { /* sem localStorage: usa o exemplo */ }
+  return criarExemplo();
+}
+
+function guardar() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) { /* ignora */ }
+}
+
+// ---------- Cálculo ----------
+function votosDe(pessoaId, ideiaId) {
+  return (estado.votos[pessoaId] || {})[ideiaId] || 0;
+}
+
+function usados(pessoaId) {
+  return Object.values(estado.votos[pessoaId] || {}).reduce((s, n) => s + n, 0);
+}
+
+function restam(pessoaId) {
+  return Math.max(0, estado.votosPorPessoa - usados(pessoaId));
+}
+
+function totalDaIdeia(ideiaId) {
+  return estado.pessoas.reduce((s, p) => s + votosDe(p.id, ideiaId), 0);
+}
+
+// Ranking ordenado; ideias empatadas ficam na mesma posição
+function calcularRanking() {
+  const lista = estado.ideias
+    .map(i => ({ ...i, total: totalDaIdeia(i.id) }))
+    .sort((a, b) => b.total - a.total);
+  lista.forEach((item, n) => {
+    item.posicao = n > 0 && item.total === lista[n - 1].total ? lista[n - 1].posicao : n + 1;
+  });
+  return lista;
+}
+
+function quemVotou() {
+  return estado.pessoas.filter(p => restam(p.id) === 0).length;
+}
+
+// ---------- Interface: resultado ----------
+function desenharResultado() {
+  const ranking = calcularRanking();
+  const vencedora = document.getElementById('vencedora');
+  const legenda = document.getElementById('vencedora-votos');
+  const lista = document.getElementById('ranking');
+  const escondido = document.getElementById('escondido');
+  lista.innerHTML = '';
+
+  const progresso = `${quemVotou()} de ${estado.pessoas.length} pessoas já usaram todos os votos.`;
+
+  if (!ranking.length) {
+    vencedora.textContent = 'Ainda não há ideias';
+    legenda.textContent = 'Acrescentem ideias no passo 1.';
+    escondido.hidden = true;
+    return;
+  }
+  if (estado.esconder) {
+    vencedora.textContent = '?';
+    legenda.textContent = progresso;
+    escondido.hidden = false;
+    return;
+  }
+  escondido.hidden = true;
+
+  const topo = ranking.filter(i => i.posicao === 1 && i.total > 0);
+  if (!topo.length) {
+    vencedora.textContent = 'Ainda sem votos';
+    legenda.textContent = progresso;
+  } else {
+    vencedora.textContent = topo.map(i => i.texto).join(' · ');
+    legenda.textContent = `${topo[0].total} ${topo[0].total === 1 ? 'voto' : 'votos'}${topo.length > 1 ? ' · empate' : ''} · ${progresso}`;
+  }
+
+  const maximo = Math.max(1, ranking[0].total);
+  ranking.forEach(i => {
+    const li = document.createElement('li');
+    const pos = document.createElement('span');
+    pos.className = 'pos';
+    pos.textContent = i.posicao + 'º';
+    const texto = document.createElement('span');
+    texto.textContent = i.texto;
+    const trilho = document.createElement('div');
+    trilho.className = 'trilho';
+    const enchimento = document.createElement('div');
+    enchimento.className = 'enchimento';
+    enchimento.style.width = (i.total / maximo * 100) + '%';
+    trilho.append(enchimento);
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.textContent = i.total;
+    li.append(pos, texto, trilho, num);
+    lista.append(li);
+  });
+}
+
+// ---------- Interface: ideias e pessoas ----------
+function linhaComRemover(texto, aoRemover) {
+  const li = document.createElement('li');
+  const span = document.createElement('span');
+  span.textContent = texto;
+  const remover = document.createElement('button');
+  remover.className = 'btn-remover';
+  remover.textContent = '×';
+  remover.title = 'Remover';
+  remover.setAttribute('aria-label', 'Remover ' + texto);
+  remover.onclick = aoRemover;
+  li.append(span, remover);
+  return li;
+}
+
+function desenharIdeias() {
+  const lista = document.getElementById('lista-ideias');
+  lista.innerHTML = '';
+  if (!estado.ideias.length) lista.innerHTML = '<li class="vazio">Sem ideias ainda.</li>';
+  estado.ideias.forEach(ideia => {
+    lista.append(linhaComRemover(ideia.texto, () => {
+      estado.ideias = estado.ideias.filter(i => i.id !== ideia.id);
+      Object.values(estado.votos).forEach(v => delete v[ideia.id]);
+      atualizar();
+    }));
+  });
+}
+
+function desenharPessoas() {
+  const lista = document.getElementById('lista-pessoas');
+  lista.innerHTML = '';
+  if (!estado.pessoas.length) lista.innerHTML = '<li class="vazio">Sem pessoas ainda.</li>';
+  estado.pessoas.forEach(pessoa => {
+    lista.append(linhaComRemover(`${pessoa.nome} · ${usados(pessoa.id)}/${estado.votosPorPessoa} votos`, () => {
+      estado.pessoas = estado.pessoas.filter(p => p.id !== pessoa.id);
+      delete estado.votos[pessoa.id];
+      atualizar();
+    }));
+  });
+}
+
+// ---------- Interface: boletim de voto ----------
+function desenharBoletim() {
+  const seletor = document.getElementById('votante');
+  seletor.innerHTML = '';
+  estado.pessoas.forEach(p => seletor.append(new Option(p.nome, p.id)));
+  if (!estado.pessoas.some(p => p.id === estado.votanteAtual)) {
+    estado.votanteAtual = estado.pessoas[0] ? estado.pessoas[0].id : '';
+  }
+  seletor.value = estado.votanteAtual;
+
+  const quem = estado.votanteAtual;
+  const sobra = quem ? restam(quem) : 0;
+  document.getElementById('restam').textContent = quem
+    ? `Restam ${sobra} ${sobra === 1 ? 'voto' : 'votos'}`
+    : 'Acrescentem pessoas';
+
+  const boletim = document.getElementById('boletim');
+  boletim.innerHTML = '';
+  if (!quem || !estado.ideias.length) {
+    boletim.innerHTML = '<li class="vazio">Precisam de pelo menos uma ideia e uma pessoa.</li>';
+    return;
+  }
+  estado.ideias.forEach(ideia => {
+    const li = document.createElement('li');
+    const texto = document.createElement('span');
+    texto.textContent = ideia.texto;
+    const contador = document.createElement('div');
+    contador.className = 'contador';
+    const menos = document.createElement('button');
+    menos.className = 'btn-voto';
+    menos.textContent = '−';
+    menos.setAttribute('aria-label', 'Tirar voto a ' + ideia.texto);
+    menos.disabled = votosDe(quem, ideia.id) === 0;
+    menos.onclick = () => mudarVoto(quem, ideia.id, -1);
+    const meus = document.createElement('span');
+    meus.className = 'meus';
+    meus.textContent = votosDe(quem, ideia.id);
+    const mais = document.createElement('button');
+    mais.className = 'btn-voto';
+    mais.textContent = '+';
+    mais.setAttribute('aria-label', 'Dar voto a ' + ideia.texto);
+    mais.disabled = sobra === 0;
+    mais.onclick = () => mudarVoto(quem, ideia.id, 1);
+    contador.append(menos, meus, mais);
+    li.append(texto, contador);
+    boletim.append(li);
+  });
+}
+
+function mudarVoto(pessoaId, ideiaId, delta) {
+  if (delta > 0 && restam(pessoaId) === 0) return;
+  const votos = estado.votos[pessoaId] || (estado.votos[pessoaId] = {});
+  votos[ideiaId] = Math.max(0, (votos[ideiaId] || 0) + delta);
+  if (!votos[ideiaId]) delete votos[ideiaId];
+  atualizar();
+}
+
+// Se os votos por pessoa baixarem, corta os votos a mais (a partir das últimas ideias)
+function ajustarExcessos() {
+  estado.pessoas.forEach(p => {
+    const votos = estado.votos[p.id] || {};
+    let excesso = usados(p.id) - estado.votosPorPessoa;
+    Object.keys(votos).reverse().forEach(id => {
+      while (excesso > 0 && votos[id] > 0) { votos[id]--; excesso--; }
+      if (!votos[id]) delete votos[id];
+    });
+  });
+}
+
+// ---------- Exportar ----------
+function textoResultado() {
+  const ranking = calcularRanking();
+  const linhas = ranking.map(i => `${i.posicao}º  ${i.texto} (${i.total} ${i.total === 1 ? 'voto' : 'votos'})`);
+  return [
+    'VOTAÇÃO DE IDEIAS',
+    `${estado.pessoas.length} ${estado.pessoas.length === 1 ? 'pessoa' : 'pessoas'} · ${estado.votosPorPessoa} ${estado.votosPorPessoa === 1 ? 'voto' : 'votos'} cada · ${quemVotou()} já votaram tudo`,
+    '',
+    ...(linhas.length ? linhas : ['(sem ideias)']),
+    '',
+    'Feito com a votação de ideias da JUNITEC'
+  ].join('\n');
+}
+
+function csvResultado() {
+  const aspas = t => '"' + String(t).replace(/"/g, '""') + '"';
+  const cabecalho = ['Posição', 'Ideia', 'Total', ...estado.pessoas.map(p => p.nome)];
+  const linhas = calcularRanking().map(i => [i.posicao, i.texto, i.total, ...estado.pessoas.map(p => votosDe(p.id, i.id))]);
+  return [cabecalho, ...linhas].map(l => l.map(aspas).join(';')).join('\r\n');
+}
+
+function descarregar(conteudo, nome, tipo) {
+  const blob = new Blob(['﻿' + conteudo], { type: tipo });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = nome;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+async function copiar() {
+  const texto = textoResultado();
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch (e) {
+    // Alternativa para browsers sem acesso à área de transferência
+    const area = document.createElement('textarea');
+    area.value = texto;
+    document.body.append(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  mostrarFeedback('Copiado!');
+}
+
+function mostrarFeedback(msg) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  clearTimeout(mostrarFeedback.t);
+  mostrarFeedback.t = setTimeout(() => el.textContent = '', 2500);
+}
+
+// ---------- Ligações aos controlos ----------
+function atualizar() {
+  guardar();
+  document.getElementById('votos-por-pessoa').value = estado.votosPorPessoa;
+  document.getElementById('esconder').checked = estado.esconder;
+  desenharIdeias();
+  desenharPessoas();
+  desenharBoletim();
+  desenharResultado();
+}
+
+document.getElementById('form-ideia').onsubmit = e => {
+  e.preventDefault();
+  const campo = document.getElementById('nova-ideia');
+  const texto = campo.value.trim();
+  if (!texto) return;
+  estado.ideias.push({ id: novoId(), texto });
+  campo.value = '';
+  atualizar();
+  campo.focus();
+};
+
+document.getElementById('form-pessoa').onsubmit = e => {
+  e.preventDefault();
+  const campo = document.getElementById('nova-pessoa');
+  const nome = campo.value.trim();
+  if (!nome) return;
+  const pessoa = { id: novoId(), nome };
+  estado.pessoas.push(pessoa);
+  if (!estado.votanteAtual) estado.votanteAtual = pessoa.id;
+  campo.value = '';
+  atualizar();
+  campo.focus();
+};
+
+document.getElementById('votos-por-pessoa').onchange = e => {
+  estado.votosPorPessoa = Math.min(20, Math.max(1, parseInt(e.target.value, 10) || 1));
+  ajustarExcessos();
+  atualizar();
+};
+
+document.getElementById('votante').onchange = e => {
+  estado.votanteAtual = e.target.value;
+  atualizar();
+};
+
+document.getElementById('esconder').onchange = e => {
+  estado.esconder = e.target.checked;
+  atualizar();
+};
+
+document.getElementById('copiar').onclick = copiar;
+document.getElementById('csv').onclick = () => {
+  descarregar(csvResultado(), 'votacao-ideias.csv', 'text/csv;charset=utf-8');
+  mostrarFeedback('CSV descarregado.');
+};
+document.getElementById('nova-votacao').onclick = () => {
+  if (!confirm('Apagar todos os votos e manter as ideias e as pessoas?')) return;
+  estado.votos = {};
+  atualizar();
+  mostrarFeedback('Votos a zero.');
+};
+document.getElementById('exemplo').onclick = () => {
+  estado = criarExemplo();
+  atualizar();
+  mostrarFeedback('Exemplo reposto.');
+};
+document.getElementById('limpar').onclick = () => {
+  if (!confirm('Apagar ideias, pessoas e votos?')) return;
+  estado = criarVazio();
+  atualizar();
+  mostrarFeedback('Tudo limpo.');
+};
+
+// ---------- Arranque ----------
+atualizar();
+</script>
+</body>
+</html>
