@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Proposta de valor · JUNITEC</title>
+<title>Votação de ideias · JUNITEC</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* Base */
@@ -29,47 +29,59 @@
     border-radius: 8px; border: 1px solid transparent; padding: 10px 16px;
     cursor: pointer; box-shadow: none;
   }
+  button:disabled { opacity: .4; cursor: not-allowed; }
   .btn-principal { background: #74D1EF; color: #0944A1; }
-  .btn-principal:hover { background: #8FDBF3; }
+  .btn-principal:hover:not(:disabled) { background: #8FDBF3; }
   .btn-contorno { background: transparent; color: #F6F6F6; border-color: #4D85C2; }
   .btn-contorno:hover { background: #1E6BBB; }
-  .btn-adicionar { background: transparent; color: #175FAA; border: 1px dashed #C9DAEE; width: 100%; margin-top: 8px; padding: 8px; }
-  .btn-adicionar:hover { border-color: #175FAA; }
+  .btn-claro { background: #175FAA; color: #F6F6F6; }
+  .btn-claro:hover { background: #0944A1; }
   .btn-remover { background: transparent; color: #3D4F6B; padding: 6px 10px; font-size: 1.1rem; line-height: 1; }
   .btn-remover:hover { color: #175FAA; background: #E2EEFF; }
+  .btn-voto { background: #E2EEFF; color: #0944A1; width: 36px; height: 36px; padding: 0; font-size: 1.2rem; }
+  .btn-voto:hover:not(:disabled) { background: #C9DAEE; }
 
-  /* Campos de topo */
-  .topo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-  .topo label { display: block; font-weight: 600; font-size: .85rem; color: #E2EEFF; margin-bottom: 6px; }
+  /* Resultado */
+  .resultado { border: 1px solid #4D85C2; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+  .resultado .rotulo { font-size: .8rem; font-weight: 600; color: #E2EEFF; text-transform: uppercase; letter-spacing: .05em; }
+  .vencedora { font-size: 1.6rem; font-weight: 800; color: #74D1EF; margin: 4px 0; line-height: 1.2; }
+  .vencedora-votos { color: #E2EEFF; font-size: .9rem; margin: 0 0 16px; }
+  .ranking { list-style: none; margin: 0; padding: 0; }
+  .ranking li { display: grid; grid-template-columns: 28px 1fr 2fr 40px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid #4D85C2; font-size: .9rem; }
+  .ranking .pos { font-weight: 700; color: #E2EEFF; }
+  .ranking .trilho { height: 10px; background: #1E6BBB; border-radius: 5px; overflow: hidden; }
+  .ranking .enchimento { height: 100%; background: #74D1EF; border-radius: 5px; }
+  .ranking .num { text-align: right; font-weight: 700; color: #74D1EF; }
+  .escondido { color: #E2EEFF; font-size: .9rem; margin: 8px 0 0; }
+
+  /* Cartões */
+  .grelha { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cartao { background: #F6F6F6; color: #3D4F6B; border-radius: 12px; padding: 20px; }
+  .cartao h2 { color: #175FAA; font-weight: 700; font-size: 1.15rem; margin: 0 0 4px; }
+  .cartao .sub { font-size: .8rem; margin: 0 0 12px; }
+  .cartao + .cartao { margin-top: 16px; }
+  .coluna { display: flex; flex-direction: column; }
+
   input, select {
     font-family: inherit; font-size: .9rem; color: #3D4F6B;
     width: 100%; padding: 9px 10px; border-radius: 8px;
     border: 1px solid #C9DAEE; background: #FFFFFF;
   }
   input:focus, select:focus { outline: 2px solid #74D1EF; outline-offset: 1px; }
+  .acrescentar { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 12px; }
+  .lista { list-style: none; margin: 0; padding: 0; }
+  .lista li { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid #C9DAEE; font-size: .9rem; }
+  .vazio { font-size: .85rem; font-style: italic; padding: 8px 0; }
+  .linha-config { display: grid; grid-template-columns: 1fr 90px; gap: 8px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
 
-  /* Resultado */
-  .resultado {
-    display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center;
-    border: 1px solid #4D85C2; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
-  }
-  .encaixe-numero { font-size: 4rem; font-weight: 800; color: #74D1EF; line-height: 1; }
-  .encaixe-legenda { font-size: .8rem; color: #E2EEFF; margin-top: 6px; }
-  .frase { font-size: 1.05rem; font-weight: 600; margin: 0 0 8px; }
-  .por-cobrir { font-size: .85rem; color: #E2EEFF; margin: 0; }
-
-  /* Canvas */
-  .canvas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .lado { background: #F6F6F6; color: #3D4F6B; border-radius: 12px; padding: 20px; }
-  .lado h2 { color: #175FAA; font-weight: 700; font-size: 1.2rem; margin: 0 0 4px; }
-  .lado .sub { font-size: .8rem; margin: 0 0 12px; }
-  .bloco { border-top: 1px solid #C9DAEE; padding-top: 14px; margin-top: 14px; }
-  .bloco h3 { color: #175FAA; font-weight: 700; font-size: .95rem; margin: 0 0 2px; }
-  .bloco .dica { font-size: .78rem; margin: 0 0 8px; }
-  .item { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-bottom: 8px; }
-  .item.ligado { grid-template-columns: 1fr auto; }
-  .item .liga { grid-column: 1 / 2; font-size: .8rem; }
-  .item .liga select { padding: 6px 8px; font-size: .8rem; }
+  /* Votar */
+  .votante { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .restam { font-weight: 700; color: #175FAA; white-space: nowrap; }
+  .boletim li { grid-template-columns: 1fr auto; }
+  .contador { display: flex; align-items: center; gap: 8px; }
+  .contador .meus { min-width: 22px; text-align: center; font-weight: 700; color: #175FAA; }
+  .opcao { display: flex; gap: 8px; align-items: center; font-size: .85rem; margin-top: 12px; }
+  .opcao input { width: auto; }
 
   /* Acções */
   .accoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
@@ -79,12 +91,13 @@
   /* Rodapé */
   footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #4D85C2; font-size: 12px; color: #E2EEFF; }
 
-  /* Telemóvel: tudo em coluna, perfil do cliente primeiro */
+  /* Telemóvel: tudo em coluna */
   @media (max-width: 640px) {
     h1 { font-size: 1.6rem; }
-    .topo, .canvas, .resultado { grid-template-columns: 1fr; }
-    .perfil { order: -1; }
-    .encaixe-numero { font-size: 3.2rem; }
+    .grelha { grid-template-columns: 1fr; }
+    .ranking li { grid-template-columns: 24px 1fr 40px; }
+    .ranking .trilho { display: none; }
+    .vencedora { font-size: 1.3rem; }
   }
 </style>
 </head>
@@ -92,109 +105,112 @@
 <div class="pagina">
 
   <header>
-    <h1>Canvas de proposta de valor</h1>
+    <h1>Votação de ideias</h1>
     <div class="barra"></div>
-    <p class="intro">Para equipas da JUNITEC testarem se uma oferta resolve o que o cliente precisa. Descrevam o cliente à direita, a oferta à esquerda, e liguem cada aliviador a uma dor e cada criador a um ganho.</p>
+    <p class="intro">Para equipas da JUNITEC escolherem as melhores ideias depois de um brainstorm. Juntem as ideias, cada pessoa distribui os seus votos e vejam o ranking.</p>
   </header>
 
-  <section class="topo">
-    <div>
-      <label for="oferta">Oferta</label>
-      <input id="oferta" placeholder="Ex.: Diagnóstico digital express">
-    </div>
-    <div>
-      <label for="segmento">Segmento de clientes</label>
-      <input id="segmento" placeholder="Ex.: Donos de PME de restauração">
-    </div>
-  </section>
-
   <section class="resultado" aria-live="polite">
-    <div>
-      <div class="encaixe-numero" id="encaixe">0%</div>
-      <div class="encaixe-legenda" id="encaixe-legenda">de encaixe</div>
-    </div>
-    <div>
-      <p class="frase" id="frase"></p>
-      <p class="por-cobrir" id="por-cobrir"></p>
-    </div>
+    <div class="rotulo">Ideia mais votada</div>
+    <div class="vencedora" id="vencedora"></div>
+    <p class="vencedora-votos" id="vencedora-votos"></p>
+    <ol class="ranking" id="ranking"></ol>
+    <p class="escondido" id="escondido" hidden>Os totais estão escondidos até ao fim da votação, para ninguém ser influenciado.</p>
   </section>
 
-  <section class="canvas">
-    <div class="lado mapa">
-      <h2>Mapa de valor</h2>
-      <p class="sub">O que a nossa oferta faz.</p>
-      <div class="bloco" data-bloco="produtos"></div>
-      <div class="bloco" data-bloco="aliviadores"></div>
-      <div class="bloco" data-bloco="criadores"></div>
+  <section class="grelha">
+    <div class="coluna">
+      <div class="cartao">
+        <h2>1. Ideias</h2>
+        <p class="sub">Escrevam cada ideia do brainstorm numa frase.</p>
+        <form class="acrescentar" id="form-ideia">
+          <input id="nova-ideia" placeholder="Ex.: Workshop de IA para PME" aria-label="Nova ideia">
+          <button class="btn-claro" type="submit">Acrescentar</button>
+        </form>
+        <ul class="lista" id="lista-ideias"></ul>
+      </div>
+      <div class="cartao">
+        <h2>2. Pessoas</h2>
+        <p class="sub">Quem vota e quantos votos tem cada um.</p>
+        <label class="linha-config">Votos por pessoa
+          <input id="votos-por-pessoa" type="number" min="1" max="20">
+        </label>
+        <form class="acrescentar" id="form-pessoa">
+          <input id="nova-pessoa" placeholder="Ex.: Ana" aria-label="Nova pessoa">
+          <button class="btn-claro" type="submit">Acrescentar</button>
+        </form>
+        <ul class="lista" id="lista-pessoas"></ul>
+      </div>
     </div>
-    <div class="lado perfil">
-      <h2>Perfil do cliente</h2>
-      <p class="sub">O que o cliente quer fazer, o que o incomoda e o que valoriza.</p>
-      <div class="bloco" data-bloco="tarefas"></div>
-      <div class="bloco" data-bloco="dores"></div>
-      <div class="bloco" data-bloco="ganhos"></div>
+
+    <div class="cartao">
+      <h2>3. Votar</h2>
+      <p class="sub">Escolham quem está a votar. Podem pôr mais de um voto na mesma ideia.</p>
+      <div class="votante">
+        <select id="votante" aria-label="Quem está a votar"></select>
+        <span class="restam" id="restam"></span>
+      </div>
+      <ul class="lista boletim" id="boletim"></ul>
+      <label class="opcao"><input type="checkbox" id="esconder"> Esconder os totais até toda a gente votar</label>
     </div>
   </section>
 
   <div class="accoes">
     <button class="btn-principal" id="copiar">Copiar resultado</button>
-    <button class="btn-contorno" id="descarregar">Descarregar .txt</button>
+    <button class="btn-contorno" id="csv">Exportar CSV</button>
+    <button class="btn-contorno" id="nova-votacao">Nova votação</button>
     <button class="btn-contorno" id="exemplo">Repor exemplo</button>
     <button class="btn-contorno" id="limpar">Limpar tudo</button>
     <span class="feedback" id="feedback"></span>
   </div>
-  <p class="aviso">O canvas fica guardado só neste browser (localStorage). Nada é enviado para nenhum servidor.</p>
+  <p class="aviso">A votação fica guardada só neste browser (localStorage). Nada é enviado para nenhum servidor: usem um só computador ou ecrã partilhado.</p>
 
   <footer>Feito pela JUNITEC</footer>
 </div>
 
 <script>
-// ---------- Configuração dos blocos ----------
-const BLOCOS = {
-  tarefas:     { titulo: 'Tarefas do cliente', dica: 'O que o cliente está a tentar fazer.', vazio: 'Ex.: Gerir reservas' },
-  dores:       { titulo: 'Dores', dica: 'O que o irrita, trava ou custa caro.', vazio: 'Ex.: Perde reservas por telefone' },
-  ganhos:      { titulo: 'Ganhos', dica: 'Os resultados que espera ou que o surpreenderiam.', vazio: 'Ex.: Mais clientes ao fim-de-semana' },
-  produtos:    { titulo: 'Produtos e serviços', dica: 'O que entregamos.', vazio: 'Ex.: Diagnóstico de 2 horas' },
-  aliviadores: { titulo: 'Aliviadores de dores', dica: 'Como a oferta reduz uma dor. Escolham qual.', vazio: 'Ex.: Reservas online simples', liga: 'dores', verbo: 'Alivia' },
-  criadores:   { titulo: 'Criadores de ganhos', dica: 'Como a oferta cria um ganho. Escolham qual.', vazio: 'Ex.: Campanha local no Instagram', liga: 'ganhos', verbo: 'Cria' }
-};
-const CHAVE = 'junitec-proposta-valor';
-
-// ---------- Exemplo (dados fictícios) ----------
-function criarExemplo() {
-  return {
-    oferta: 'Diagnóstico digital express (exemplo)',
-    segmento: 'donos de PME de restauração (exemplo)',
-    tarefas: [item('Gerir reservas e encomendas'), item('Atrair clientes novos')],
-    dores: [item('Perde reservas por telefone', 'd1'), item('Não sabe que ferramentas digitais escolher', 'd2'), item('Pouco tempo para aprender coisas novas', 'd3')],
-    ganhos: [item('Mais clientes ao fim-de-semana', 'g1'), item('Saber quanto vai gastar antes de começar', 'g2'), item('Ver resultados em poucas semanas', 'g3')],
-    produtos: [item('Diagnóstico de 2 horas no restaurante'), item('Relatório com plano de 90 dias')],
-    aliviadores: [item('Sistema de reservas online já configurado', null, 'd1'), item('Comparação de 3 ferramentas com preços', null, 'd2')],
-    criadores: [item('Campanha local no Instagram', null, 'g1'), item('Orçamento fechado por fase', null, 'g2')]
-  };
-}
-
-function criarVazio() {
-  const vazio = { oferta: '', segmento: '' };
-  Object.keys(BLOCOS).forEach(b => vazio[b] = [item('')]);
-  return vazio;
-}
-
-function item(texto, id, liga) {
-  return { id: id || novoId(), texto, liga: liga || '' };
-}
+// ---------- Estado ----------
+const CHAVE = 'junitec-votacao-ideias';
 
 function novoId() {
   return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-// ---------- Estado e gravação ----------
+// Exemplo com dados fictícios, para a app não abrir vazia
+function criarExemplo() {
+  return {
+    votosPorPessoa: 3,
+    esconder: false,
+    votanteAtual: 'p1',
+    ideias: [
+      { id: 'a', texto: 'Workshop de IA para PME (exemplo)' },
+      { id: 'b', texto: 'Newsletter mensal de inovação (exemplo)' },
+      { id: 'c', texto: 'Hackathon com uma empresa parceira (exemplo)' },
+      { id: 'd', texto: 'Podcast com alumni (exemplo)' }
+    ],
+    pessoas: [
+      { id: 'p1', nome: 'Pessoa A' },
+      { id: 'p2', nome: 'Pessoa B' },
+      { id: 'p3', nome: 'Pessoa C' }
+    ],
+    votos: {
+      p1: { a: 2, c: 1 },
+      p2: { c: 2, d: 1 },
+      p3: { a: 1 }
+    }
+  };
+}
+
+function criarVazio() {
+  return { votosPorPessoa: 3, esconder: false, votanteAtual: '', ideias: [], pessoas: [], votos: {} };
+}
+
 let estado = carregar();
 
 function carregar() {
   try {
     const guardado = JSON.parse(localStorage.getItem(CHAVE));
-    if (guardado && guardado.dores) return guardado;
+    if (guardado && Array.isArray(guardado.ideias)) return guardado;
   } catch (e) { /* sem localStorage: usa o exemplo */ }
   return criarExemplo();
 }
@@ -203,212 +219,236 @@ function guardar() {
   try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) { /* ignora */ }
 }
 
-// ---------- Cálculo do encaixe ----------
-function preenchidos(bloco) {
-  return estado[bloco].filter(i => i.texto.trim());
+// ---------- Cálculo ----------
+function votosDe(pessoaId, ideiaId) {
+  return (estado.votos[pessoaId] || {})[ideiaId] || 0;
 }
 
-function cobertos(blocoAlvo, blocoLiga) {
-  const ligados = new Set(preenchidos(blocoLiga).map(i => i.liga).filter(Boolean));
-  return preenchidos(blocoAlvo).filter(i => ligados.has(i.id));
+function usados(pessoaId) {
+  return Object.values(estado.votos[pessoaId] || {}).reduce((s, n) => s + n, 0);
 }
 
-function calcularEncaixe() {
-  const total = preenchidos('dores').length + preenchidos('ganhos').length;
-  const doresCobertas = cobertos('dores', 'aliviadores');
-  const ganhosCobertos = cobertos('ganhos', 'criadores');
-  const feitos = doresCobertas.length + ganhosCobertos.length;
-  return {
-    total, feitos, doresCobertas, ganhosCobertos,
-    percentagem: total ? Math.round(feitos / total * 100) : 0,
-    doresPorCobrir: preenchidos('dores').filter(d => !doresCobertas.includes(d)),
-    ganhosPorCobrir: preenchidos('ganhos').filter(g => !ganhosCobertos.includes(g))
-  };
+function restam(pessoaId) {
+  return Math.max(0, estado.votosPorPessoa - usados(pessoaId));
 }
 
-function minuscula(texto) {
-  return texto ? texto.charAt(0).toLowerCase() + texto.slice(1) : texto;
+function totalDaIdeia(ideiaId) {
+  return estado.pessoas.reduce((s, p) => s + votosDe(p.id, ideiaId), 0);
 }
 
-function construirFrase(r) {
-  const oferta = estado.oferta.trim() || 'A nossa oferta';
-  const segmento = estado.segmento.trim() || 'os nossos clientes';
-  const tarefa = preenchidos('tarefas')[0];
-  const dor = r.doresCobertas[0];
-  const ganho = r.ganhosCobertos[0];
-  let frase = `${oferta} ajuda ${minuscula(segmento)}`;
-  if (tarefa) frase += ` a ${minuscula(tarefa.texto)}`;
-  frase += '.';
-  if (dor) frase += ` Resolve: ${minuscula(dor.texto)}.`;
-  if (ganho) frase += ` Traz: ${minuscula(ganho.texto)}.`;
-  return frase;
+// Ranking ordenado; ideias empatadas ficam na mesma posição
+function calcularRanking() {
+  const lista = estado.ideias
+    .map(i => ({ ...i, total: totalDaIdeia(i.id) }))
+    .sort((a, b) => b.total - a.total);
+  lista.forEach((item, n) => {
+    item.posicao = n > 0 && item.total === lista[n - 1].total ? lista[n - 1].posicao : n + 1;
+  });
+  return lista;
 }
 
-// ---------- Interface: blocos ----------
-function desenharBlocos() {
-  Object.keys(BLOCOS).forEach(desenharBloco);
+function quemVotou() {
+  return estado.pessoas.filter(p => restam(p.id) === 0).length;
 }
 
-function desenharBloco(nome) {
-  const cfg = BLOCOS[nome];
-  const caixa = document.querySelector(`[data-bloco="${nome}"]`);
-  caixa.innerHTML = '';
+// ---------- Interface: resultado ----------
+function desenharResultado() {
+  const ranking = calcularRanking();
+  const vencedora = document.getElementById('vencedora');
+  const legenda = document.getElementById('vencedora-votos');
+  const lista = document.getElementById('ranking');
+  const escondido = document.getElementById('escondido');
+  lista.innerHTML = '';
 
-  const h3 = document.createElement('h3');
-  h3.textContent = cfg.titulo;
-  const dica = document.createElement('p');
-  dica.className = 'dica';
-  dica.textContent = cfg.dica;
-  caixa.append(h3, dica);
+  const progresso = `${quemVotou()} de ${estado.pessoas.length} pessoas já usaram todos os votos.`;
 
-  estado[nome].forEach(it => caixa.append(criarLinha(nome, it)));
+  if (!ranking.length) {
+    vencedora.textContent = 'Ainda não há ideias';
+    legenda.textContent = 'Acrescentem ideias no passo 1.';
+    escondido.hidden = true;
+    return;
+  }
+  if (estado.esconder) {
+    vencedora.textContent = '?';
+    legenda.textContent = progresso;
+    escondido.hidden = false;
+    return;
+  }
+  escondido.hidden = true;
 
-  const adicionar = document.createElement('button');
-  adicionar.className = 'btn-adicionar';
-  adicionar.textContent = '+ Acrescentar';
-  adicionar.onclick = () => {
-    const novo = item('');
-    estado[nome].push(novo);
-    guardar();
-    desenharBloco(nome);
-    caixa.querySelector(`[data-id="${novo.id}"]`).focus();
-    atualizarResultado();
-  };
-  caixa.append(adicionar);
+  const topo = ranking.filter(i => i.posicao === 1 && i.total > 0);
+  if (!topo.length) {
+    vencedora.textContent = 'Ainda sem votos';
+    legenda.textContent = progresso;
+  } else {
+    vencedora.textContent = topo.map(i => i.texto).join(' · ');
+    legenda.textContent = `${topo[0].total} ${topo[0].total === 1 ? 'voto' : 'votos'}${topo.length > 1 ? ' · empate' : ''} · ${progresso}`;
+  }
+
+  const maximo = Math.max(1, ranking[0].total);
+  ranking.forEach(i => {
+    const li = document.createElement('li');
+    const pos = document.createElement('span');
+    pos.className = 'pos';
+    pos.textContent = i.posicao + 'º';
+    const texto = document.createElement('span');
+    texto.textContent = i.texto;
+    const trilho = document.createElement('div');
+    trilho.className = 'trilho';
+    const enchimento = document.createElement('div');
+    enchimento.className = 'enchimento';
+    enchimento.style.width = (i.total / maximo * 100) + '%';
+    trilho.append(enchimento);
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.textContent = i.total;
+    li.append(pos, texto, trilho, num);
+    lista.append(li);
+  });
 }
 
-function criarLinha(nome, it) {
-  const cfg = BLOCOS[nome];
-  const linha = document.createElement('div');
-  linha.className = 'item';
-
-  const campo = document.createElement('input');
-  campo.value = it.texto;
-  campo.placeholder = cfg.vazio;
-  campo.dataset.id = it.id;
-  campo.setAttribute('aria-label', cfg.titulo);
-  campo.oninput = () => {
-    it.texto = campo.value;
-    guardar();
-    atualizarOpcoes();
-    atualizarResultado();
-  };
-
+// ---------- Interface: ideias e pessoas ----------
+function linhaComRemover(texto, aoRemover) {
+  const li = document.createElement('li');
+  const span = document.createElement('span');
+  span.textContent = texto;
   const remover = document.createElement('button');
   remover.className = 'btn-remover';
   remover.textContent = '×';
   remover.title = 'Remover';
-  remover.setAttribute('aria-label', 'Remover');
-  remover.onclick = () => {
-    estado[nome] = estado[nome].filter(x => x.id !== it.id);
-    limparLigacoes(it.id);
-    guardar();
-    desenharBlocos();
-    atualizarResultado();
-  };
-
-  linha.append(campo, remover);
-
-  // Aliviadores e criadores ligam-se a uma dor ou a um ganho
-  if (cfg.liga) {
-    const liga = document.createElement('label');
-    liga.className = 'liga';
-    const seletor = document.createElement('select');
-    seletor.dataset.liga = cfg.liga;
-    seletor.dataset.id = it.id;
-    seletor.setAttribute('aria-label', `${cfg.verbo} qual?`);
-    seletor.onchange = () => {
-      it.liga = seletor.value;
-      guardar();
-      atualizarResultado();
-    };
-    liga.append(seletor);
-    linha.append(liga);
-    preencherOpcoes(seletor, nome, it);
-  }
-  return linha;
+  remover.setAttribute('aria-label', 'Remover ' + texto);
+  remover.onclick = aoRemover;
+  li.append(span, remover);
+  return li;
 }
 
-function preencherOpcoes(seletor, nome, it) {
-  const cfg = BLOCOS[nome];
+function desenharIdeias() {
+  const lista = document.getElementById('lista-ideias');
+  lista.innerHTML = '';
+  if (!estado.ideias.length) lista.innerHTML = '<li class="vazio">Sem ideias ainda.</li>';
+  estado.ideias.forEach(ideia => {
+    lista.append(linhaComRemover(ideia.texto, () => {
+      estado.ideias = estado.ideias.filter(i => i.id !== ideia.id);
+      Object.values(estado.votos).forEach(v => delete v[ideia.id]);
+      atualizar();
+    }));
+  });
+}
+
+function desenharPessoas() {
+  const lista = document.getElementById('lista-pessoas');
+  lista.innerHTML = '';
+  if (!estado.pessoas.length) lista.innerHTML = '<li class="vazio">Sem pessoas ainda.</li>';
+  estado.pessoas.forEach(pessoa => {
+    lista.append(linhaComRemover(`${pessoa.nome} · ${usados(pessoa.id)}/${estado.votosPorPessoa} votos`, () => {
+      estado.pessoas = estado.pessoas.filter(p => p.id !== pessoa.id);
+      delete estado.votos[pessoa.id];
+      atualizar();
+    }));
+  });
+}
+
+// ---------- Interface: boletim de voto ----------
+function desenharBoletim() {
+  const seletor = document.getElementById('votante');
   seletor.innerHTML = '';
-  const nenhuma = new Option(`${cfg.verbo}: (escolher)`, '');
-  seletor.append(nenhuma);
-  preenchidos(cfg.liga).forEach(alvo => {
-    seletor.append(new Option(`${cfg.verbo}: ${alvo.texto}`, alvo.id));
+  estado.pessoas.forEach(p => seletor.append(new Option(p.nome, p.id)));
+  if (!estado.pessoas.some(p => p.id === estado.votanteAtual)) {
+    estado.votanteAtual = estado.pessoas[0] ? estado.pessoas[0].id : '';
+  }
+  seletor.value = estado.votanteAtual;
+
+  const quem = estado.votanteAtual;
+  const sobra = quem ? restam(quem) : 0;
+  document.getElementById('restam').textContent = quem
+    ? `Restam ${sobra} ${sobra === 1 ? 'voto' : 'votos'}`
+    : 'Acrescentem pessoas';
+
+  const boletim = document.getElementById('boletim');
+  boletim.innerHTML = '';
+  if (!quem || !estado.ideias.length) {
+    boletim.innerHTML = '<li class="vazio">Precisam de pelo menos uma ideia e uma pessoa.</li>';
+    return;
+  }
+  estado.ideias.forEach(ideia => {
+    const li = document.createElement('li');
+    const texto = document.createElement('span');
+    texto.textContent = ideia.texto;
+    const contador = document.createElement('div');
+    contador.className = 'contador';
+    const menos = document.createElement('button');
+    menos.className = 'btn-voto';
+    menos.textContent = '−';
+    menos.setAttribute('aria-label', 'Tirar voto a ' + ideia.texto);
+    menos.disabled = votosDe(quem, ideia.id) === 0;
+    menos.onclick = () => mudarVoto(quem, ideia.id, -1);
+    const meus = document.createElement('span');
+    meus.className = 'meus';
+    meus.textContent = votosDe(quem, ideia.id);
+    const mais = document.createElement('button');
+    mais.className = 'btn-voto';
+    mais.textContent = '+';
+    mais.setAttribute('aria-label', 'Dar voto a ' + ideia.texto);
+    mais.disabled = sobra === 0;
+    mais.onclick = () => mudarVoto(quem, ideia.id, 1);
+    contador.append(menos, meus, mais);
+    li.append(texto, contador);
+    boletim.append(li);
   });
-  seletor.value = it.liga && preenchidos(cfg.liga).some(a => a.id === it.liga) ? it.liga : '';
 }
 
-// Actualiza só as listas de escolha, sem tirar o foco a quem está a escrever
-function atualizarOpcoes() {
-  ['aliviadores', 'criadores'].forEach(nome => {
-    estado[nome].forEach(it => {
-      const seletor = document.querySelector(`select[data-id="${it.id}"]`);
-      if (seletor) preencherOpcoes(seletor, nome, it);
+function mudarVoto(pessoaId, ideiaId, delta) {
+  if (delta > 0 && restam(pessoaId) === 0) return;
+  const votos = estado.votos[pessoaId] || (estado.votos[pessoaId] = {});
+  votos[ideiaId] = Math.max(0, (votos[ideiaId] || 0) + delta);
+  if (!votos[ideiaId]) delete votos[ideiaId];
+  atualizar();
+}
+
+// Se os votos por pessoa baixarem, corta os votos a mais (a partir das últimas ideias)
+function ajustarExcessos() {
+  estado.pessoas.forEach(p => {
+    const votos = estado.votos[p.id] || {};
+    let excesso = usados(p.id) - estado.votosPorPessoa;
+    Object.keys(votos).reverse().forEach(id => {
+      while (excesso > 0 && votos[id] > 0) { votos[id]--; excesso--; }
+      if (!votos[id]) delete votos[id];
     });
   });
 }
 
-function limparLigacoes(id) {
-  ['aliviadores', 'criadores'].forEach(nome => {
-    estado[nome].forEach(it => { if (it.liga === id) it.liga = ''; });
-  });
-}
-
-// ---------- Interface: resultado ----------
-function atualizarResultado() {
-  const r = calcularEncaixe();
-  document.getElementById('encaixe').textContent = r.percentagem + '%';
-  document.getElementById('encaixe-legenda').textContent =
-    r.total ? `de encaixe · ${r.feitos} de ${r.total} dores e ganhos cobertos` : 'de encaixe · acrescentem dores e ganhos';
-  document.getElementById('frase').textContent = construirFrase(r);
-
-  const faltam = [...r.doresPorCobrir.map(d => 'dor: ' + d.texto), ...r.ganhosPorCobrir.map(g => 'ganho: ' + g.texto)];
-  document.getElementById('por-cobrir').textContent = faltam.length
-    ? 'Por cobrir → ' + faltam.join(' · ')
-    : (r.total ? 'Todas as dores e ganhos têm resposta.' : '');
-}
-
-// ---------- Exportar em texto ----------
-function textoExportado() {
-  const r = calcularEncaixe();
-  const nomeDe = (bloco, id) => (preenchidos(bloco).find(x => x.id === id) || {}).texto;
-  const lista = nome => {
-    const cfg = BLOCOS[nome];
-    const linhas = preenchidos(nome).map(it => {
-      const alvo = cfg.liga && it.liga ? nomeDe(cfg.liga, it.liga) : '';
-      return '- ' + it.texto + (alvo ? `  → ${cfg.verbo.toLowerCase()}: ${alvo}` : '');
-    });
-    return `${cfg.titulo}\n${linhas.length ? linhas.join('\n') : '- (vazio)'}`;
-  };
+// ---------- Exportar ----------
+function textoResultado() {
+  const ranking = calcularRanking();
+  const linhas = ranking.map(i => `${i.posicao}º  ${i.texto} (${i.total} ${i.total === 1 ? 'voto' : 'votos'})`);
   return [
-    'PROPOSTA DE VALOR',
-    `Oferta: ${estado.oferta.trim() || '(sem nome)'}`,
-    `Segmento: ${estado.segmento.trim() || '(sem segmento)'}`,
-    `Encaixe: ${r.percentagem}% (${r.feitos} de ${r.total} dores e ganhos cobertos)`,
+    'VOTAÇÃO DE IDEIAS',
+    `${estado.pessoas.length} ${estado.pessoas.length === 1 ? 'pessoa' : 'pessoas'} · ${estado.votosPorPessoa} ${estado.votosPorPessoa === 1 ? 'voto' : 'votos'} cada · ${quemVotou()} já votaram tudo`,
     '',
-    construirFrase(r),
+    ...(linhas.length ? linhas : ['(sem ideias)']),
     '',
-    'PERFIL DO CLIENTE',
-    lista('tarefas'), lista('dores'), lista('ganhos'),
-    '',
-    'MAPA DE VALOR',
-    lista('produtos'), lista('aliviadores'), lista('criadores'),
-    '',
-    'Feito com o canvas de proposta de valor da JUNITEC'
+    'Feito com a votação de ideias da JUNITEC'
   ].join('\n');
 }
 
-function mostrarFeedback(msg) {
-  const el = document.getElementById('feedback');
-  el.textContent = msg;
-  clearTimeout(mostrarFeedback.t);
-  mostrarFeedback.t = setTimeout(() => el.textContent = '', 2500);
+function csvResultado() {
+  const aspas = t => '"' + String(t).replace(/"/g, '""') + '"';
+  const cabecalho = ['Posição', 'Ideia', 'Total', ...estado.pessoas.map(p => p.nome)];
+  const linhas = calcularRanking().map(i => [i.posicao, i.texto, i.total, ...estado.pessoas.map(p => votosDe(p.id, i.id))]);
+  return [cabecalho, ...linhas].map(l => l.map(aspas).join(';')).join('\r\n');
+}
+
+function descarregar(conteudo, nome, tipo) {
+  const blob = new Blob(['﻿' + conteudo], { type: tipo });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = nome;
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 async function copiar() {
-  const texto = textoExportado();
+  const texto = textoResultado();
   try {
     await navigator.clipboard.writeText(texto);
   } catch (e) {
@@ -423,49 +463,89 @@ async function copiar() {
   mostrarFeedback('Copiado!');
 }
 
-function descarregar() {
-  const blob = new Blob([textoExportado()], { type: 'text/plain;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'proposta-de-valor.txt';
-  link.click();
-  URL.revokeObjectURL(link.href);
-  mostrarFeedback('Ficheiro descarregado.');
+function mostrarFeedback(msg) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  clearTimeout(mostrarFeedback.t);
+  mostrarFeedback.t = setTimeout(() => el.textContent = '', 2500);
 }
 
-// ---------- Arranque ----------
-function aplicarEstado() {
-  document.getElementById('oferta').value = estado.oferta;
-  document.getElementById('segmento').value = estado.segmento;
-  desenharBlocos();
-  atualizarResultado();
+// ---------- Ligações aos controlos ----------
+function atualizar() {
+  guardar();
+  document.getElementById('votos-por-pessoa').value = estado.votosPorPessoa;
+  document.getElementById('esconder').checked = estado.esconder;
+  desenharIdeias();
+  desenharPessoas();
+  desenharBoletim();
+  desenharResultado();
 }
 
-['oferta', 'segmento'].forEach(campo => {
-  document.getElementById(campo).oninput = e => {
-    estado[campo] = e.target.value;
-    guardar();
-    atualizarResultado();
-  };
-});
+document.getElementById('form-ideia').onsubmit = e => {
+  e.preventDefault();
+  const campo = document.getElementById('nova-ideia');
+  const texto = campo.value.trim();
+  if (!texto) return;
+  estado.ideias.push({ id: novoId(), texto });
+  campo.value = '';
+  atualizar();
+  campo.focus();
+};
+
+document.getElementById('form-pessoa').onsubmit = e => {
+  e.preventDefault();
+  const campo = document.getElementById('nova-pessoa');
+  const nome = campo.value.trim();
+  if (!nome) return;
+  const pessoa = { id: novoId(), nome };
+  estado.pessoas.push(pessoa);
+  if (!estado.votanteAtual) estado.votanteAtual = pessoa.id;
+  campo.value = '';
+  atualizar();
+  campo.focus();
+};
+
+document.getElementById('votos-por-pessoa').onchange = e => {
+  estado.votosPorPessoa = Math.min(20, Math.max(1, parseInt(e.target.value, 10) || 1));
+  ajustarExcessos();
+  atualizar();
+};
+
+document.getElementById('votante').onchange = e => {
+  estado.votanteAtual = e.target.value;
+  atualizar();
+};
+
+document.getElementById('esconder').onchange = e => {
+  estado.esconder = e.target.checked;
+  atualizar();
+};
 
 document.getElementById('copiar').onclick = copiar;
-document.getElementById('descarregar').onclick = descarregar;
+document.getElementById('csv').onclick = () => {
+  descarregar(csvResultado(), 'votacao-ideias.csv', 'text/csv;charset=utf-8');
+  mostrarFeedback('CSV descarregado.');
+};
+document.getElementById('nova-votacao').onclick = () => {
+  if (!confirm('Apagar todos os votos e manter as ideias e as pessoas?')) return;
+  estado.votos = {};
+  atualizar();
+  mostrarFeedback('Votos a zero.');
+};
 document.getElementById('exemplo').onclick = () => {
   estado = criarExemplo();
-  guardar();
-  aplicarEstado();
+  atualizar();
   mostrarFeedback('Exemplo reposto.');
 };
 document.getElementById('limpar').onclick = () => {
-  if (!confirm('Apagar todo o canvas?')) return;
+  if (!confirm('Apagar ideias, pessoas e votos?')) return;
   estado = criarVazio();
-  guardar();
-  aplicarEstado();
-  mostrarFeedback('Canvas limpo.');
+  atualizar();
+  mostrarFeedback('Tudo limpo.');
 };
 
-aplicarEstado();
+// ---------- Arranque ----------
+atualizar();
 </script>
 </body>
 </html>
