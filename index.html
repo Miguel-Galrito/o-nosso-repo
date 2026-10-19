@@ -8,15 +8,9 @@
 <style>
   /* Base */
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #175FAA;
-    color: #F6F6F6;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-    line-height: 1.45;
-  }
+  body { margin: 0; background: #175FAA; color: #F6F6F6; font-family: 'Montserrat', sans-serif; font-weight: 400; line-height: 1.45; }
   .pagina { max-width: 1100px; margin: 0 auto; padding: 32px 16px 24px; }
+  [hidden] { display: none !important; }
 
   /* Cabeçalho */
   .marca { display: flex; align-items: center; gap: 16px; }
@@ -27,22 +21,26 @@
   .intro { color: #E2EEFF; margin: 0 0 24px; max-width: 680px; }
 
   /* Botões */
-  button {
-    font-family: inherit; font-size: .9rem; font-weight: 600;
-    border-radius: 8px; border: 1px solid transparent; padding: 10px 16px;
-    cursor: pointer; box-shadow: none;
-  }
+  button { font-family: inherit; font-size: .9rem; font-weight: 600; border-radius: 8px; border: 1px solid transparent; padding: 10px 16px; cursor: pointer; box-shadow: none; }
   button:disabled { opacity: .4; cursor: not-allowed; }
   .btn-principal { background: #74D1EF; color: #0944A1; }
   .btn-principal:hover:not(:disabled) { background: #8FDBF3; }
   .btn-contorno { background: transparent; color: #F6F6F6; border-color: #4D85C2; }
   .btn-contorno:hover { background: #1E6BBB; }
   .btn-claro { background: #175FAA; color: #F6F6F6; }
-  .btn-claro:hover { background: #0944A1; }
+  .btn-claro:hover:not(:disabled) { background: #0944A1; }
+  .btn-texto { background: transparent; color: #175FAA; padding: 4px 6px; text-decoration: underline; }
   .btn-remover { background: transparent; color: #3D4F6B; padding: 6px 10px; font-size: 1.1rem; line-height: 1; }
   .btn-remover:hover { color: #175FAA; background: #E2EEFF; }
   .btn-voto { background: #E2EEFF; color: #0944A1; width: 36px; height: 36px; padding: 0; font-size: 1.2rem; }
   .btn-voto:hover:not(:disabled) { background: #C9DAEE; }
+
+  /* Sala */
+  .sala { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; border: 1px solid #4D85C2; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; font-size: .9rem; }
+  .sala strong { color: #74D1EF; }
+  .estado-ligacao::before { content: '●'; margin-right: 6px; color: #E2EEFF; }
+  .estado-ligacao.ligado::before { color: #74D1EF; }
+  .sala .espaco { flex: 1; }
 
   /* Resultado */
   .resultado { border: 1px solid #4D85C2; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
@@ -53,9 +51,10 @@
   .ranking li { display: grid; grid-template-columns: 28px 1fr 2fr 40px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid #4D85C2; font-size: .9rem; }
   .ranking .pos { font-weight: 700; color: #E2EEFF; }
   .ranking .trilho { height: 10px; background: #1E6BBB; border-radius: 5px; overflow: hidden; }
-  .ranking .enchimento { height: 100%; background: #74D1EF; border-radius: 5px; }
+  .ranking .enchimento { height: 100%; background: #74D1EF; border-radius: 5px; transition: width .4s; }
   .ranking .num { text-align: right; font-weight: 700; color: #74D1EF; }
   .escondido { color: #E2EEFF; font-size: .9rem; margin: 8px 0 0; }
+  #revelar { margin-top: 12px; }
 
   /* Cartões */
   .grelha { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -64,29 +63,24 @@
   .cartao .sub { font-size: .8rem; margin: 0 0 12px; }
   .cartao + .cartao { margin-top: 16px; }
   .coluna { display: flex; flex-direction: column; }
-
-  input, select {
-    font-family: inherit; font-size: .9rem; color: #3D4F6B;
-    width: 100%; padding: 9px 10px; border-radius: 8px;
-    border: 1px solid #C9DAEE; background: #FFFFFF;
-  }
+  .entrada { max-width: 560px; }
+  input, select { font-family: inherit; font-size: .9rem; color: #3D4F6B; width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid #C9DAEE; background: #FFFFFF; }
   input:focus, select:focus { outline: 2px solid #74D1EF; outline-offset: 1px; }
   .acrescentar { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 12px; }
   .lista { list-style: none; margin: 0; padding: 0; }
   .lista li { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid #C9DAEE; font-size: .9rem; }
   .vazio { font-size: .85rem; font-style: italic; padding: 8px 0; }
   .linha-config { display: grid; grid-template-columns: 1fr 90px; gap: 8px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
+  .ou { font-size: .8rem; margin: 16px 0 8px; }
 
   /* Votar */
-  .votante { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .votante { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
+  .votante strong { color: #175FAA; }
   .restam { font-weight: 700; color: #175FAA; white-space: nowrap; }
-  .boletim li { grid-template-columns: 1fr auto; }
   .contador { display: flex; align-items: center; gap: 8px; }
   .contador .meus { min-width: 22px; text-align: center; font-weight: 700; color: #175FAA; }
   .entregar { width: 100%; margin-top: 12px; }
-  .entregue { font-size: .9rem; padding: 12px 0; border-top: 1px solid #C9DAEE; }
-  .entregue strong { color: #175FAA; }
-  #revelar { margin-top: 12px; }
+  .entregue { font-size: .9rem; padding: 12px 0; border-top: 1px solid #C9DAEE; display: block !important; }
 
   /* Acções */
   .accoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
@@ -118,186 +112,267 @@
       </div>
     </div>
     <div class="barra"></div>
-    <p class="intro">Para equipas da JUNITEC escolherem as melhores ideias depois de um brainstorm. Juntem as ideias e cada pessoa vota à vez. Os votos ficam secretos até toda a gente votar, para ninguém ser influenciado.</p>
+    <p class="intro">Para equipas da JUNITEC escolherem as melhores ideias depois de um brainstorm. Cada pessoa vota no seu telemóvel e tudo actualiza em tempo real. Os votos ficam secretos até toda a gente votar, para ninguém ser influenciado.</p>
   </header>
 
-  <section class="resultado" aria-live="polite">
-    <div class="rotulo">Ideia mais votada</div>
-    <div class="vencedora" id="vencedora"></div>
-    <p class="vencedora-votos" id="vencedora-votos"></p>
-    <ol class="ranking" id="ranking"></ol>
-    <p class="escondido" id="escondido" hidden>O ranking fica escondido até toda a gente entregar o voto, para ninguém ser influenciado.</p>
-    <button class="btn-contorno" id="revelar" hidden>Revelar já</button>
+  <!-- Sem sala: criar ou entrar -->
+  <section id="ecra-entrada" class="cartao entrada" hidden>
+    <h2>Começar</h2>
+    <p class="sub">Uma pessoa cria a sala e partilha o link com o grupo.</p>
+    <button class="btn-claro" id="criar-sala">Criar sala</button>
+    <p class="ou">Ou colem aqui o link ou o código da sala:</p>
+    <form class="acrescentar" id="form-entrar">
+      <input id="codigo-sala" placeholder="Ex.: k3x9p2m7qa" aria-label="Link ou código da sala">
+      <button class="btn-claro" type="submit">Entrar</button>
+    </form>
   </section>
 
-  <section class="grelha">
-    <div class="coluna">
-      <div class="cartao">
-        <h2>1. Ideias</h2>
-        <p class="sub">Escrevam cada ideia do brainstorm numa frase.</p>
-        <form class="acrescentar" id="form-ideia">
-          <input id="nova-ideia" placeholder="Ex.: Workshop de IA para PME" aria-label="Nova ideia">
-          <button class="btn-claro" type="submit">Acrescentar</button>
-        </form>
-        <ul class="lista" id="lista-ideias"></ul>
-      </div>
-      <div class="cartao">
-        <h2>2. Pessoas</h2>
-        <p class="sub">Quem vota e quantos votos tem cada um.</p>
-        <label class="linha-config">Votos por pessoa
-          <input id="votos-por-pessoa" type="number" min="1" max="20">
-        </label>
-        <form class="acrescentar" id="form-pessoa">
-          <input id="nova-pessoa" placeholder="Ex.: Ana" aria-label="Nova pessoa">
-          <button class="btn-claro" type="submit">Acrescentar</button>
-        </form>
-        <ul class="lista" id="lista-pessoas"></ul>
-      </div>
-    </div>
+  <!-- Com sala -->
+  <div id="ecra-sala" hidden>
+    <section class="sala">
+      <span>Sala <strong id="nome-sala"></strong></span>
+      <span class="estado-ligacao" id="ligacao">A ligar…</span>
+      <span class="espaco"></span>
+      <button class="btn-principal" id="copiar-link">Copiar link da sala</button>
+      <button class="btn-contorno" id="sair-sala">Nova sala</button>
+    </section>
 
-    <div class="cartao">
-      <h2>3. Votar</h2>
-      <p class="sub">Cada pessoa vota à vez e entrega o voto. Podem pôr mais de um voto na mesma ideia. Depois de entregue, o voto fica secreto.</p>
-      <div class="votante">
-        <select id="votante" aria-label="Quem está a votar"></select>
-        <span class="restam" id="restam"></span>
-      </div>
-      <ul class="lista boletim" id="boletim"></ul>
-      <button class="btn-claro entregar" id="entregar">Entregar voto</button>
-    </div>
-  </section>
+    <section class="resultado" aria-live="polite">
+      <div class="rotulo">Ideia mais votada</div>
+      <div class="vencedora" id="vencedora"></div>
+      <p class="vencedora-votos" id="vencedora-votos"></p>
+      <ol class="ranking" id="ranking"></ol>
+      <p class="escondido" id="escondido" hidden>O ranking fica escondido até toda a gente entregar o voto, para ninguém ser influenciado.</p>
+      <button class="btn-contorno" id="revelar" hidden>Revelar já</button>
+    </section>
 
-  <div class="accoes">
-    <button class="btn-principal" id="copiar">Copiar resultado</button>
-    <button class="btn-contorno" id="csv">Exportar CSV</button>
-    <button class="btn-contorno" id="nova-votacao">Nova votação</button>
-    <button class="btn-contorno" id="exemplo">Repor exemplo</button>
-    <button class="btn-contorno" id="limpar">Limpar tudo</button>
-    <span class="feedback" id="feedback"></span>
+    <section class="grelha">
+      <div class="coluna">
+        <div class="cartao">
+          <h2>1. Ideias</h2>
+          <p class="sub">Qualquer pessoa da sala pode acrescentar ideias.</p>
+          <form class="acrescentar" id="form-ideia">
+            <input id="nova-ideia" maxlength="140" placeholder="Ex.: Workshop de IA para PME" aria-label="Nova ideia">
+            <button class="btn-claro" type="submit">Acrescentar</button>
+          </form>
+          <ul class="lista" id="lista-ideias"></ul>
+          <button class="btn-texto" id="ideias-exemplo" hidden>Juntar 4 ideias de exemplo</button>
+        </div>
+        <div class="cartao">
+          <h2>2. Pessoas</h2>
+          <p class="sub">Quem entrou na sala e se já votou.</p>
+          <label class="linha-config">Votos por pessoa
+            <input id="votos-por-pessoa" type="number" min="1" max="20">
+          </label>
+          <ul class="lista" id="lista-pessoas"></ul>
+        </div>
+      </div>
+
+      <div class="cartao">
+        <h2>3. O teu voto</h2>
+        <!-- Ainda não disse quem é -->
+        <div id="quem-sou" hidden>
+          <p class="sub">Escreve o teu nome para entrares na votação.</p>
+          <form class="acrescentar" id="form-nome">
+            <input id="meu-nome" maxlength="40" placeholder="Ex.: Ana" aria-label="O teu nome">
+            <button class="btn-claro" type="submit">Entrar</button>
+          </form>
+          <div id="ja-na-lista" hidden>
+            <p class="ou">Já estás na lista? Escolhe o teu nome:</p>
+            <div class="acrescentar">
+              <select id="escolher-nome" aria-label="Escolher o meu nome"></select>
+              <button class="btn-claro" id="sou-eu">Sou eu</button>
+            </div>
+          </div>
+        </div>
+        <!-- Boletim -->
+        <div id="boletim-area" hidden>
+          <div class="votante">
+            <span>A votar como <strong id="eu-nome"></strong> <button class="btn-texto" id="trocar">trocar</button></span>
+            <span class="restam" id="restam"></span>
+          </div>
+          <p class="sub">Podes pôr mais de um voto na mesma ideia. Só os outros vêem o teu voto depois de o entregares, e só quando toda a gente votar.</p>
+          <ul class="lista" id="boletim"></ul>
+          <button class="btn-claro entregar" id="entregar">Entregar voto</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="accoes">
+      <button class="btn-principal" id="copiar">Copiar resultado</button>
+      <button class="btn-contorno" id="csv">Exportar CSV</button>
+      <button class="btn-contorno" id="nova-votacao">Nova votação</button>
+      <span class="feedback" id="feedback"></span>
+    </div>
+    <p class="aviso">Os votos passam pelo serviço público ntfy.sh e ficam lá cerca de 12 horas. Quem tiver o link da sala consegue vê-los: não ponham dados confidenciais.</p>
   </div>
-  <p class="aviso">A votação fica guardada só neste browser (localStorage). Nada é enviado para nenhum servidor: usem um só computador ou ecrã partilhado.</p>
 
   <footer>Feito pela JUNITEC</footer>
 </div>
 
 <script>
-// ---------- Estado ----------
-const CHAVE = 'junitec-votacao-ideias';
+// ---------- Ligação à sala (ntfy.sh) ----------
+// Cada sala é um tópico do ntfy.sh. Todas as acções são mensagens no tópico;
+// cada browser lê as mensagens por ordem e reconstrói o mesmo estado.
+const SERVIDOR = 'https://ntfy.sh';
+let sala = '';
+let fonte = null;
+let ultimoId = '';
+const vistos = new Set();
 
-function novoId() {
-  return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+function topico() { return 'junitec-votacao-' + sala; }
+
+function novoCodigo() {
+  const letras = 'abcdefghijkmnpqrstuvwxyz23456789';
+  const n = crypto.getRandomValues(new Uint8Array(10));
+  return Array.from(n, x => letras[x % letras.length]).join('');
 }
 
-// Exemplo com dados fictícios, para a app não abrir vazia
-// A Pessoa A e a Pessoa B já votaram; falta a Pessoa C, por isso o ranking ainda está escondido
-function criarExemplo() {
-  return {
-    votosPorPessoa: 3,
-    revelado: false,
-    votanteAtual: 'p3',
-    ideias: [
-      { id: 'a', texto: 'Workshop de IA para PME (exemplo)' },
-      { id: 'b', texto: 'Newsletter mensal de inovação (exemplo)' },
-      { id: 'c', texto: 'Hackathon com uma empresa parceira (exemplo)' },
-      { id: 'd', texto: 'Podcast com alumni (exemplo)' }
-    ],
-    pessoas: [
-      { id: 'p1', nome: 'Pessoa A' },
-      { id: 'p2', nome: 'Pessoa B' },
-      { id: 'p3', nome: 'Pessoa C' }
-    ],
-    votos: {
-      p1: { a: 2, c: 1 },
-      p2: { c: 2, d: 1 }
-    },
-    entregues: { p1: true, p2: true }
+function novoId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+async function enviar(evento) {
+  try {
+    const resposta = await fetch(`${SERVIDOR}/${topico()}`, { method: 'POST', body: JSON.stringify(evento) });
+    if (!resposta.ok) throw new Error(resposta.status);
+    receber(await resposta.json());   // aplica já, sem esperar pelo eco
+    return true;
+  } catch (e) {
+    mostrarFeedback('Não foi possível enviar. Verifiquem a internet e tentem outra vez.');
+    return false;
+  }
+}
+
+function ligar() {
+  if (fonte) fonte.close();
+  fonte = new EventSource(`${SERVIDOR}/${topico()}/sse?since=${ultimoId || 'all'}`);
+  fonte.onopen = () => mostrarLigacao(true);
+  fonte.onmessage = e => { try { receber(JSON.parse(e.data)); } catch (err) { /* ignora */ } };
+  fonte.onerror = () => {
+    mostrarLigacao(false);
+    fonte.close();
+    setTimeout(ligar, 3000);   // volta a tentar a partir da última mensagem
   };
 }
 
-function criarVazio() {
-  return { votosPorPessoa: 3, revelado: false, votanteAtual: '', ideias: [], pessoas: [], votos: {}, entregues: {} };
+function receber(msg) {
+  if (msg.event !== 'message' || vistos.has(msg.id)) return;
+  vistos.add(msg.id);
+  ultimoId = msg.id;
+  let evento;
+  try { evento = JSON.parse(msg.message); } catch (e) { return; }
+  aplicar(evento);
+  agendarDesenho();
 }
 
-let estado = carregar();
-
-function carregar() {
-  try {
-    const guardado = JSON.parse(localStorage.getItem(CHAVE));
-    if (guardado && Array.isArray(guardado.ideias)) {
-      // Dados da versão anterior: ainda não tinham votos entregues
-      guardado.entregues = guardado.entregues || {};
-      guardado.revelado = !!guardado.revelado;
-      delete guardado.esconder;
-      return guardado;
-    }
-  } catch (e) { /* sem localStorage: usa o exemplo */ }
-  return criarExemplo();
+function mostrarLigacao(ok) {
+  const el = document.getElementById('ligacao');
+  el.textContent = ok ? 'Ligado em tempo real' : 'Sem ligação, a tentar outra vez…';
+  el.classList.toggle('ligado', ok);
 }
 
-function guardar() {
-  try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) { /* ignora */ }
+// ---------- Estado partilhado ----------
+let estado = estadoInicial();
+
+function estadoInicial() {
+  return { votosPorPessoa: 3, ideias: [], pessoas: [], ronda: 0, votos: {}, revelado: false };
+}
+
+// Cada mensagem da sala muda o estado da mesma forma em todos os browsers
+function aplicar(ev) {
+  const existe = (lista, id) => lista.some(x => x.id === id);
+  switch (ev.t) {
+    case 'config':
+      estado.votosPorPessoa = Math.min(20, Math.max(1, parseInt(ev.votosPorPessoa, 10) || 3));
+      break;
+    case 'ideia':
+      if (ev.id && ev.texto && !existe(estado.ideias, ev.id)) estado.ideias.push({ id: ev.id, texto: String(ev.texto).slice(0, 140) });
+      break;
+    case 'remover-ideia':
+      estado.ideias = estado.ideias.filter(i => i.id !== ev.id);
+      break;
+    case 'pessoa':
+      if (ev.id && ev.nome && !existe(estado.pessoas, ev.id)) estado.pessoas.push({ id: ev.id, nome: String(ev.nome).slice(0, 40) });
+      break;
+    case 'remover-pessoa':
+      estado.pessoas = estado.pessoas.filter(p => p.id !== ev.id);
+      delete estado.votos[ev.id];
+      break;
+    case 'voto':
+      if (ev.ronda === estado.ronda && !estado.votos[ev.pessoa]) estado.votos[ev.pessoa] = ev.votos || {};
+      break;
+    case 'revelar':
+      if (ev.ronda === estado.ronda) estado.revelado = true;
+      break;
+    case 'nova-votacao':
+      if (ev.ronda > estado.ronda) { estado.ronda = ev.ronda; estado.votos = {}; estado.revelado = false; }
+      break;
+  }
+}
+
+// ---------- Dados deste browser ----------
+function chaveLocal(nome) { return `junitec-votacao-${sala}-${nome}`; }
+function lerLocal(nome) { try { return JSON.parse(localStorage.getItem(chaveLocal(nome))); } catch (e) { return null; } }
+function gravarLocal(nome, valor) { try { localStorage.setItem(chaveLocal(nome), JSON.stringify(valor)); } catch (e) { /* ignora */ } }
+
+let eu = '';                // id da pessoa que usa este browser
+let rascunho = { ronda: 0, votos: {} };   // votos ainda não entregues: só existem aqui
+
+function meuRascunho() {
+  if (rascunho.ronda !== estado.ronda) rascunho = { ronda: estado.ronda, votos: {} };
+  return rascunho.votos;
 }
 
 // ---------- Cálculo ----------
-function votosDe(pessoaId, ideiaId) {
-  return (estado.votos[pessoaId] || {})[ideiaId] || 0;
-}
+function entregou(pessoaId) { return !!estado.votos[pessoaId]; }
+function quemVotou() { return estado.pessoas.filter(p => entregou(p.id)).length; }
+function usadosNoRascunho() { return Object.values(meuRascunho()).reduce((s, n) => s + n, 0); }
+function restam() { return Math.max(0, estado.votosPorPessoa - usadosNoRascunho()); }
 
-function usados(pessoaId) {
-  return Object.values(estado.votos[pessoaId] || {}).reduce((s, n) => s + n, 0);
-}
-
-function restam(pessoaId) {
-  return Math.max(0, estado.votosPorPessoa - usados(pessoaId));
+function resultadoVisivel() {
+  const todos = estado.pessoas.length > 0 && quemVotou() === estado.pessoas.length;
+  return todos || estado.revelado;
 }
 
 function totalDaIdeia(ideiaId) {
-  return estado.pessoas.reduce((s, p) => s + votosDe(p.id, ideiaId), 0);
+  return estado.pessoas.reduce((s, p) => s + ((estado.votos[p.id] || {})[ideiaId] || 0), 0);
 }
 
 // Ranking ordenado; ideias empatadas ficam na mesma posição
 function calcularRanking() {
-  const lista = estado.ideias
-    .map(i => ({ ...i, total: totalDaIdeia(i.id) }))
-    .sort((a, b) => b.total - a.total);
+  const lista = estado.ideias.map(i => ({ ...i, total: totalDaIdeia(i.id) })).sort((a, b) => b.total - a.total);
   lista.forEach((item, n) => {
     item.posicao = n > 0 && item.total === lista[n - 1].total ? lista[n - 1].posicao : n + 1;
   });
   return lista;
 }
 
-// ---------- Voto secreto ----------
-function entregou(pessoaId) {
-  return !!estado.entregues[pessoaId];
+// ---------- Interface ----------
+let desenhoPendente = false;
+function agendarDesenho() {
+  if (desenhoPendente) return;
+  desenhoPendente = true;
+  setTimeout(() => { desenhoPendente = false; desenhar(); }, 30);   // junta várias mensagens num só desenho
 }
 
-function quemVotou() {
-  return estado.pessoas.filter(p => entregou(p.id)).length;
+function desenhar() {
+  const campo = document.getElementById('votos-por-pessoa');
+  if (document.activeElement !== campo) campo.value = estado.votosPorPessoa;
+  desenharResultado();
+  desenharIdeias();
+  desenharPessoas();
+  desenharVoto();
 }
 
-// O ranking só aparece quando toda a gente entregou o voto (ou se alguém o revelar à mão)
-function resultadoVisivel() {
-  const todos = estado.pessoas.length > 0 && quemVotou() === estado.pessoas.length;
-  return todos || estado.revelado;
-}
-
-function proximoPorVotar() {
-  const p = estado.pessoas.find(p => !entregou(p.id));
-  return p ? p.id : estado.votanteAtual;
-}
-
-// ---------- Interface: resultado ----------
 function desenharResultado() {
   const ranking = calcularRanking();
   const vencedora = document.getElementById('vencedora');
   const legenda = document.getElementById('vencedora-votos');
   const lista = document.getElementById('ranking');
-  const escondido = document.getElementById('escondido');
-  const revelar = document.getElementById('revelar');
   lista.innerHTML = '';
-  escondido.hidden = true;
-  revelar.hidden = true;
-
+  document.getElementById('escondido').hidden = true;
+  document.getElementById('revelar').hidden = true;
   const progresso = `${quemVotou()} de ${estado.pessoas.length} pessoas já votaram.`;
 
   if (!ranking.length) {
@@ -308,8 +383,8 @@ function desenharResultado() {
   if (!resultadoVisivel()) {
     vencedora.textContent = 'Votação a decorrer';
     legenda.textContent = progresso;
-    escondido.hidden = false;
-    revelar.hidden = quemVotou() === 0;
+    document.getElementById('escondido').hidden = false;
+    document.getElementById('revelar').hidden = quemVotou() === 0;
     return;
   }
 
@@ -321,40 +396,27 @@ function desenharResultado() {
     vencedora.textContent = topo.map(i => i.texto).join(' · ');
     legenda.textContent = `${topo[0].total} ${topo[0].total === 1 ? 'voto' : 'votos'}${topo.length > 1 ? ' · empate' : ''} · ${progresso}`;
   }
-
   const maximo = Math.max(1, ranking[0].total);
   ranking.forEach(i => {
     const li = document.createElement('li');
-    const pos = document.createElement('span');
-    pos.className = 'pos';
-    pos.textContent = i.posicao + 'º';
-    const texto = document.createElement('span');
-    texto.textContent = i.texto;
-    const trilho = document.createElement('div');
-    trilho.className = 'trilho';
-    const enchimento = document.createElement('div');
-    enchimento.className = 'enchimento';
+    const pos = Object.assign(document.createElement('span'), { className: 'pos', textContent: i.posicao + 'º' });
+    const texto = Object.assign(document.createElement('span'), { textContent: i.texto });
+    const trilho = Object.assign(document.createElement('div'), { className: 'trilho' });
+    const enchimento = Object.assign(document.createElement('div'), { className: 'enchimento' });
     enchimento.style.width = (i.total / maximo * 100) + '%';
     trilho.append(enchimento);
-    const num = document.createElement('span');
-    num.className = 'num';
-    num.textContent = i.total;
+    const num = Object.assign(document.createElement('span'), { className: 'num', textContent: i.total });
     li.append(pos, texto, trilho, num);
     lista.append(li);
   });
 }
 
-// ---------- Interface: ideias e pessoas ----------
-function linhaComRemover(texto, aoRemover) {
+function linhaComRemover(texto, pergunta, aoRemover) {
   const li = document.createElement('li');
-  const span = document.createElement('span');
-  span.textContent = texto;
-  const remover = document.createElement('button');
-  remover.className = 'btn-remover';
-  remover.textContent = '×';
-  remover.title = 'Remover';
+  const span = Object.assign(document.createElement('span'), { textContent: texto });
+  const remover = Object.assign(document.createElement('button'), { className: 'btn-remover', textContent: '×', title: 'Remover' });
   remover.setAttribute('aria-label', 'Remover ' + texto);
-  remover.onclick = aoRemover;
+  remover.onclick = () => { if (confirm(pergunta)) aoRemover(); };
   li.append(span, remover);
   return li;
 }
@@ -363,134 +425,116 @@ function desenharIdeias() {
   const lista = document.getElementById('lista-ideias');
   lista.innerHTML = '';
   if (!estado.ideias.length) lista.innerHTML = '<li class="vazio">Sem ideias ainda.</li>';
+  document.getElementById('ideias-exemplo').hidden = estado.ideias.length > 0;
   estado.ideias.forEach(ideia => {
-    lista.append(linhaComRemover(ideia.texto, () => {
-      estado.ideias = estado.ideias.filter(i => i.id !== ideia.id);
-      Object.values(estado.votos).forEach(v => delete v[ideia.id]);
-      atualizar();
-    }));
+    lista.append(linhaComRemover(ideia.texto, `Remover "${ideia.texto}" para toda a sala?`,
+      () => enviar({ t: 'remover-ideia', id: ideia.id })));
   });
 }
 
 function desenharPessoas() {
   const lista = document.getElementById('lista-pessoas');
   lista.innerHTML = '';
-  if (!estado.pessoas.length) lista.innerHTML = '<li class="vazio">Sem pessoas ainda.</li>';
-  estado.pessoas.forEach(pessoa => {
-    lista.append(linhaComRemover(`${pessoa.nome} · ${entregou(pessoa.id) ? 'já votou ✓' : 'por votar'}`, () => {
-      estado.pessoas = estado.pessoas.filter(p => p.id !== pessoa.id);
-      delete estado.votos[pessoa.id];
-      delete estado.entregues[pessoa.id];
-      atualizar();
-    }));
+  if (!estado.pessoas.length) lista.innerHTML = '<li class="vazio">Ainda ninguém entrou.</li>';
+  estado.pessoas.forEach(p => {
+    const rotulo = `${p.nome}${p.id === eu ? ' (tu)' : ''} · ${entregou(p.id) ? 'já votou ✓' : 'por votar'}`;
+    lista.append(linhaComRemover(rotulo, `Tirar ${p.nome} da sala? O voto dele ou dela deixa de contar.`,
+      () => enviar({ t: 'remover-pessoa', id: p.id })));
   });
 }
 
-// ---------- Interface: boletim de voto ----------
-function desenharBoletim() {
-  const seletor = document.getElementById('votante');
-  seletor.innerHTML = '';
-  estado.pessoas.forEach(p => seletor.append(new Option(p.nome + (entregou(p.id) ? ' (já votou)' : ''), p.id)));
-  if (!estado.pessoas.some(p => p.id === estado.votanteAtual)) {
-    estado.votanteAtual = proximoPorVotar() || (estado.pessoas[0] ? estado.pessoas[0].id : '');
-  }
-  seletor.value = estado.votanteAtual;
+function desenharVoto() {
+  // Quem sou eu neste browser? (se a mensagem ainda estiver a chegar, mostra o formulário até lá)
+  const souConhecido = eu && estado.pessoas.some(p => p.id === eu);
+  document.getElementById('quem-sou').hidden = souConhecido;
+  document.getElementById('boletim-area').hidden = !souConhecido;
 
-  const quem = estado.votanteAtual;
-  const sobra = quem ? restam(quem) : 0;
-  const entregar = document.getElementById('entregar');
+  if (!souConhecido) {
+    const porVotar = estado.pessoas.filter(p => !entregou(p.id));
+    document.getElementById('ja-na-lista').hidden = !porVotar.length;
+    const escolher = document.getElementById('escolher-nome');
+    const atual = escolher.value;
+    escolher.innerHTML = '';
+    porVotar.forEach(p => escolher.append(new Option(p.nome, p.id)));
+    if (porVotar.some(p => p.id === atual)) escolher.value = atual;
+    return;
+  }
+
+  document.getElementById('eu-nome').textContent = estado.pessoas.find(p => p.id === eu).nome;
   const boletim = document.getElementById('boletim');
+  const entregar = document.getElementById('entregar');
   boletim.innerHTML = '';
 
-  // Voto já entregue: não se mostra em que ideias votou
-  if (quem && entregou(quem)) {
-    document.getElementById('restam').textContent = 'Voto entregue';
-    const nome = estado.pessoas.find(p => p.id === quem).nome;
-    const li = document.createElement('li');
-    li.className = 'entregue';
-    const forte = document.createElement('strong');
-    forte.textContent = nome;
-    li.append(forte, ' já entregou o voto. Fica secreto até toda a gente votar. Escolham a pessoa seguinte.');
-    boletim.append(li);
+  if (entregou(eu)) {
+    document.getElementById('restam').textContent = 'Voto entregue ✓';
+    boletim.innerHTML = '<li class="entregue">O teu voto já foi entregue. O ranking aparece quando toda a gente votar.</li>';
     entregar.hidden = true;
     return;
   }
 
-  document.getElementById('restam').textContent = quem
-    ? `Restam ${sobra} ${sobra === 1 ? 'voto' : 'votos'}`
-    : 'Acrescentem pessoas';
+  const sobra = restam();
+  document.getElementById('restam').textContent = `Restam ${sobra} ${sobra === 1 ? 'voto' : 'votos'}`;
   entregar.hidden = false;
-  entregar.disabled = !quem || usados(quem) === 0;
+  entregar.disabled = usadosNoRascunho() === 0;
 
-  if (!quem || !estado.ideias.length) {
-    boletim.innerHTML = '<li class="vazio">Precisam de pelo menos uma ideia e uma pessoa.</li>';
-    entregar.disabled = true;
+  if (!estado.ideias.length) {
+    boletim.innerHTML = '<li class="vazio">Ainda não há ideias para votar.</li>';
     return;
   }
+  const votos = meuRascunho();
   estado.ideias.forEach(ideia => {
     const li = document.createElement('li');
-    const texto = document.createElement('span');
-    texto.textContent = ideia.texto;
-    const contador = document.createElement('div');
-    contador.className = 'contador';
-    const menos = document.createElement('button');
-    menos.className = 'btn-voto';
-    menos.textContent = '−';
+    const texto = Object.assign(document.createElement('span'), { textContent: ideia.texto });
+    const contador = Object.assign(document.createElement('div'), { className: 'contador' });
+    const menos = Object.assign(document.createElement('button'), { className: 'btn-voto', textContent: '−' });
     menos.setAttribute('aria-label', 'Tirar voto a ' + ideia.texto);
-    menos.disabled = votosDe(quem, ideia.id) === 0;
-    menos.onclick = () => mudarVoto(quem, ideia.id, -1);
-    const meus = document.createElement('span');
-    meus.className = 'meus';
-    meus.textContent = votosDe(quem, ideia.id);
-    const mais = document.createElement('button');
-    mais.className = 'btn-voto';
-    mais.textContent = '+';
+    menos.disabled = !votos[ideia.id];
+    menos.onclick = () => mudarVoto(ideia.id, -1);
+    const meus = Object.assign(document.createElement('span'), { className: 'meus', textContent: votos[ideia.id] || 0 });
+    const mais = Object.assign(document.createElement('button'), { className: 'btn-voto', textContent: '+' });
     mais.setAttribute('aria-label', 'Dar voto a ' + ideia.texto);
     mais.disabled = sobra === 0;
-    mais.onclick = () => mudarVoto(quem, ideia.id, 1);
+    mais.onclick = () => mudarVoto(ideia.id, 1);
     contador.append(menos, meus, mais);
     li.append(texto, contador);
     boletim.append(li);
   });
 }
 
-// Entrega o voto e passa logo à pessoa seguinte, para ninguém ver o boletim anterior
-function entregarVoto() {
-  const quem = estado.votanteAtual;
-  if (!quem || entregou(quem) || usados(quem) === 0) return;
-  const sobra = restam(quem);
-  if (sobra > 0 && !confirm(`Ainda tens ${sobra} ${sobra === 1 ? 'voto' : 'votos'} por usar. Entregar mesmo assim?`)) return;
-  estado.entregues[quem] = true;
-  estado.votanteAtual = proximoPorVotar();
-  atualizar();
-  mostrarFeedback(resultadoVisivel() ? 'Toda a gente votou. Aqui está o ranking!' : 'Voto entregue.');
-}
+// ---------- Acções de voto ----------
 
-function mudarVoto(pessoaId, ideiaId, delta) {
-  if (entregou(pessoaId)) return;
-  if (delta > 0 && restam(pessoaId) === 0) return;
-  const votos = estado.votos[pessoaId] || (estado.votos[pessoaId] = {});
+function mudarVoto(ideiaId, delta) {
+  if (entregou(eu) || (delta > 0 && restam() === 0)) return;
+  const votos = meuRascunho();
   votos[ideiaId] = Math.max(0, (votos[ideiaId] || 0) + delta);
   if (!votos[ideiaId]) delete votos[ideiaId];
-  atualizar();
+  gravarLocal('rascunho', rascunho);
+  desenhar();
 }
 
-// Se os votos por pessoa baixarem, corta os votos a mais (a partir das últimas ideias)
-function ajustarExcessos() {
-  estado.pessoas.forEach(p => {
-    const votos = estado.votos[p.id] || {};
-    let excesso = usados(p.id) - estado.votosPorPessoa;
-    Object.keys(votos).reverse().forEach(id => {
-      while (excesso > 0 && votos[id] > 0) { votos[id]--; excesso--; }
-      if (!votos[id]) delete votos[id];
-    });
-  });
+async function entregarVoto() {
+  if (!eu || entregou(eu) || usadosNoRascunho() === 0) return;
+  const sobra = restam();
+  if (sobra > 0 && !confirm(`Ainda tens ${sobra} ${sobra === 1 ? 'voto' : 'votos'} por usar. Entregar mesmo assim?`)) return;
+  // Só conta votos em ideias que ainda existem
+  const votos = {};
+  Object.entries(meuRascunho()).forEach(([id, n]) => { if (estado.ideias.some(i => i.id === id)) votos[id] = n; });
+  if (await enviar({ t: 'voto', pessoa: eu, ronda: estado.ronda, votos })) {
+    mostrarFeedback(resultadoVisivel() ? 'Toda a gente votou. Aqui está o ranking!' : 'Voto entregue.');
+  }
+}
+
+async function entrarComNome(nome) {
+  const id = novoId();
+  eu = id;
+  gravarLocal('eu', eu);
+  await enviar({ t: 'pessoa', id, nome });
+  desenhar();
 }
 
 // ---------- Exportar ----------
 function textoResultado() {
-  const ranking = calcularRanking();
-  const linhas = ranking.map(i => `${i.posicao}º  ${i.texto} (${i.total} ${i.total === 1 ? 'voto' : 'votos'})`);
+  const linhas = calcularRanking().map(i => `${i.posicao}º  ${i.texto} (${i.total} ${i.total === 1 ? 'voto' : 'votos'})`);
   return [
     'VOTAÇÃO DE IDEIAS',
     `${estado.pessoas.length} ${estado.pessoas.length === 1 ? 'pessoa' : 'pessoas'} · ${estado.votosPorPessoa} ${estado.votosPorPessoa === 1 ? 'voto' : 'votos'} cada · ${quemVotou()} já votaram`,
@@ -504,7 +548,7 @@ function textoResultado() {
 function csvResultado() {
   const aspas = t => '"' + String(t).replace(/"/g, '""') + '"';
   const cabecalho = ['Posição', 'Ideia', 'Total', ...estado.pessoas.map(p => p.nome)];
-  const linhas = calcularRanking().map(i => [i.posicao, i.texto, i.total, ...estado.pessoas.map(p => votosDe(p.id, i.id))]);
+  const linhas = calcularRanking().map(i => [i.posicao, i.texto, i.total, ...estado.pessoas.map(p => (estado.votos[p.id] || {})[i.id] || 0)]);
   return [cabecalho, ...linhas].map(l => l.map(aspas).join(';')).join('\r\n');
 }
 
@@ -517,8 +561,7 @@ function descarregar(conteudo, nome, tipo) {
   URL.revokeObjectURL(link.href);
 }
 
-async function copiar() {
-  const texto = textoResultado();
+async function copiarTexto(texto, mensagem) {
   try {
     await navigator.clipboard.writeText(texto);
   } catch (e) {
@@ -530,107 +573,124 @@ async function copiar() {
     document.execCommand('copy');
     area.remove();
   }
-  mostrarFeedback('Copiado!');
+  mostrarFeedback(mensagem);
+}
+
+// Exportar só depois de o ranking estar visível, para não o revelar antes do tempo
+function exportarSeVisivel(acao) {
+  if (!resultadoVisivel()) return mostrarFeedback('O resultado só pode sair depois de toda a gente votar.');
+  acao();
 }
 
 function mostrarFeedback(msg) {
   const el = document.getElementById('feedback');
   el.textContent = msg;
   clearTimeout(mostrarFeedback.t);
-  mostrarFeedback.t = setTimeout(() => el.textContent = '', 2500);
+  mostrarFeedback.t = setTimeout(() => el.textContent = '', 3000);
+}
+
+// ---------- Entrar numa sala ----------
+function codigoDe(texto) {
+  const m = String(texto).trim().match(/sala=([a-z0-9]{6,20})/i) || String(texto).trim().match(/^([a-z0-9]{6,20})$/i);
+  return m ? m[1].toLowerCase() : '';
+}
+
+function abrirSala(codigo) {
+  sala = codigo;
+  estado = estadoInicial();
+  vistos.clear();
+  ultimoId = '';
+  eu = lerLocal('eu') || '';
+  rascunho = lerLocal('rascunho') || { ronda: 0, votos: {} };
+  document.getElementById('ecra-entrada').hidden = true;
+  document.getElementById('ecra-sala').hidden = false;
+  document.getElementById('nome-sala').textContent = sala;
+  desenhar();
+  ligar();
+}
+
+function arrancar() {
+  const codigo = codigoDe(location.hash);
+  if (codigo) return abrirSala(codigo);
+  if (fonte) fonte.close();
+  sala = '';
+  document.getElementById('ecra-entrada').hidden = false;
+  document.getElementById('ecra-sala').hidden = true;
 }
 
 // ---------- Ligações aos controlos ----------
-function atualizar() {
-  guardar();
-  document.getElementById('votos-por-pessoa').value = estado.votosPorPessoa;
-  desenharIdeias();
-  desenharPessoas();
-  desenharBoletim();
-  desenharResultado();
-}
+document.getElementById('criar-sala').onclick = () => { location.hash = 'sala=' + novoCodigo(); };
+document.getElementById('form-entrar').onsubmit = e => {
+  e.preventDefault();
+  const codigo = codigoDe(document.getElementById('codigo-sala').value);
+  if (!codigo) return alert('Esse link ou código não parece válido.');
+  location.hash = 'sala=' + codigo;
+};
+document.getElementById('sair-sala').onclick = () => {
+  if (confirm('Sair desta sala e criar outra? Esta sala continua a existir para quem tiver o link.')) location.hash = 'sala=' + novoCodigo();
+};
+document.getElementById('copiar-link').onclick = () => copiarTexto(location.href, 'Link copiado. Enviem-no ao grupo!');
 
 document.getElementById('form-ideia').onsubmit = e => {
   e.preventDefault();
   const campo = document.getElementById('nova-ideia');
   const texto = campo.value.trim();
   if (!texto) return;
-  estado.ideias.push({ id: novoId(), texto });
   campo.value = '';
-  atualizar();
+  enviar({ t: 'ideia', id: novoId(), texto });
   campo.focus();
 };
 
-document.getElementById('form-pessoa').onsubmit = e => {
-  e.preventDefault();
-  const campo = document.getElementById('nova-pessoa');
-  const nome = campo.value.trim();
-  if (!nome) return;
-  const pessoa = { id: novoId(), nome };
-  estado.pessoas.push(pessoa);
-  if (!estado.votanteAtual || entregou(estado.votanteAtual)) estado.votanteAtual = pessoa.id;
-  campo.value = '';
-  atualizar();
-  campo.focus();
+document.getElementById('ideias-exemplo').onclick = () => {
+  ['Workshop de IA para PME (exemplo)', 'Newsletter mensal de inovação (exemplo)',
+   'Hackathon com uma empresa parceira (exemplo)', 'Podcast com alumni (exemplo)']
+    .forEach(texto => enviar({ t: 'ideia', id: novoId(), texto }));
 };
 
 document.getElementById('votos-por-pessoa').onchange = e => {
-  estado.votosPorPessoa = Math.min(20, Math.max(1, parseInt(e.target.value, 10) || 1));
-  ajustarExcessos();
-  atualizar();
+  enviar({ t: 'config', votosPorPessoa: parseInt(e.target.value, 10) || 3 });
 };
 
-document.getElementById('votante').onchange = e => {
-  estado.votanteAtual = e.target.value;
-  atualizar();
+document.getElementById('form-nome').onsubmit = e => {
+  e.preventDefault();
+  const campo = document.getElementById('meu-nome');
+  const nome = campo.value.trim();
+  if (!nome) return;
+  campo.value = '';
+  entrarComNome(nome);
+};
+document.getElementById('sou-eu').onclick = () => {
+  const id = document.getElementById('escolher-nome').value;
+  if (!id) return;
+  eu = id;
+  gravarLocal('eu', eu);
+  desenhar();
+};
+document.getElementById('trocar').onclick = () => {
+  eu = '';
+  gravarLocal('eu', '');
+  desenhar();
 };
 
 document.getElementById('entregar').onclick = entregarVoto;
-
 document.getElementById('revelar').onclick = () => {
   const faltam = estado.pessoas.length - quemVotou();
-  if (!confirm(`Ainda ${faltam === 1 ? 'falta 1 pessoa' : `faltam ${faltam} pessoas`}. Revelar o ranking já? Quem ainda não votou vai vê-lo.`)) return;
-  estado.revelado = true;
-  atualizar();
+  if (!confirm(`Ainda ${faltam === 1 ? 'falta 1 pessoa' : `faltam ${faltam} pessoas`}. Revelar o ranking já para toda a sala?`)) return;
+  enviar({ t: 'revelar', ronda: estado.ronda });
 };
-
-// Exportar só depois de o ranking estar visível, para não o revelar antes do tempo
-function exportarSeVisivel(acao) {
-  if (!resultadoVisivel()) {
-    mostrarFeedback('O resultado só pode sair depois de toda a gente votar.');
-    return;
-  }
-  acao();
-}
-
-document.getElementById('copiar').onclick = () => exportarSeVisivel(copiar);
+document.getElementById('copiar').onclick = () => exportarSeVisivel(() => copiarTexto(textoResultado(), 'Copiado!'));
 document.getElementById('csv').onclick = () => exportarSeVisivel(() => {
   descarregar(csvResultado(), 'votacao-ideias.csv', 'text/csv;charset=utf-8');
   mostrarFeedback('CSV descarregado.');
 });
 document.getElementById('nova-votacao').onclick = () => {
-  if (!confirm('Apagar todos os votos e manter as ideias e as pessoas?')) return;
-  estado.votos = {};
-  estado.entregues = {};
-  estado.revelado = false;
-  estado.votanteAtual = estado.pessoas[0] ? estado.pessoas[0].id : '';
-  atualizar();
-  mostrarFeedback('Votos a zero.');
-};
-document.getElementById('exemplo').onclick = () => {
-  estado = criarExemplo();
-  atualizar();
-  mostrarFeedback('Exemplo reposto.');
-};
-document.getElementById('limpar').onclick = () => {
-  if (!confirm('Apagar ideias, pessoas e votos?')) return;
-  estado = criarVazio();
-  atualizar();
-  mostrarFeedback('Tudo limpo.');
+  if (!confirm('Começar uma nova votação para toda a sala? Os votos actuais deixam de contar; as ideias e as pessoas ficam.')) return;
+  enviar({ t: 'nova-votacao', ronda: estado.ronda + 1 });
 };
 
 // ---------- Arranque ----------
-atualizar();
+window.addEventListener('hashchange', arrancar);
+arrancar();
 </script>
 </body>
 </html>
