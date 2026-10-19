@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposta de valor · JUNITEC</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Base */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #175FAA;
+    color: #F6F6F6;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    line-height: 1.45;
+  }
+  .pagina { max-width: 1100px; margin: 0 auto; padding: 32px 16px 24px; }
+
+  /* Cabeçalho */
+  h1 { font-weight: 700; font-size: 2rem; margin: 0; }
+  .barra { width: 120px; height: 6px; border-radius: 3px; background: #74D1EF; margin: 12px 0 16px; }
+  .intro { color: #E2EEFF; margin: 0 0 24px; max-width: 680px; }
+
+  /* Botões */
+  button {
+    font-family: inherit; font-size: .9rem; font-weight: 600;
+    border-radius: 8px; border: 1px solid transparent; padding: 10px 16px;
+    cursor: pointer; box-shadow: none;
+  }
+  .btn-principal { background: #74D1EF; color: #0944A1; }
+  .btn-principal:hover { background: #8FDBF3; }
+  .btn-contorno { background: transparent; color: #F6F6F6; border-color: #4D85C2; }
+  .btn-contorno:hover { background: #1E6BBB; }
+  .btn-adicionar { background: transparent; color: #175FAA; border: 1px dashed #C9DAEE; width: 100%; margin-top: 8px; padding: 8px; }
+  .btn-adicionar:hover { border-color: #175FAA; }
+  .btn-remover { background: transparent; color: #3D4F6B; padding: 6px 10px; font-size: 1.1rem; line-height: 1; }
+  .btn-remover:hover { color: #175FAA; background: #E2EEFF; }
+
+  /* Campos de topo */
+  .topo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .topo label { display: block; font-weight: 600; font-size: .85rem; color: #E2EEFF; margin-bottom: 6px; }
+  input, select {
+    font-family: inherit; font-size: .9rem; color: #3D4F6B;
+    width: 100%; padding: 9px 10px; border-radius: 8px;
+    border: 1px solid #C9DAEE; background: #FFFFFF;
+  }
+  input:focus, select:focus { outline: 2px solid #74D1EF; outline-offset: 1px; }
+
+  /* Resultado */
+  .resultado {
+    display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center;
+    border: 1px solid #4D85C2; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
+  }
+  .encaixe-numero { font-size: 4rem; font-weight: 800; color: #74D1EF; line-height: 1; }
+  .encaixe-legenda { font-size: .8rem; color: #E2EEFF; margin-top: 6px; }
+  .frase { font-size: 1.05rem; font-weight: 600; margin: 0 0 8px; }
+  .por-cobrir { font-size: .85rem; color: #E2EEFF; margin: 0; }
+
+  /* Canvas */
+  .canvas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .lado { background: #F6F6F6; color: #3D4F6B; border-radius: 12px; padding: 20px; }
+  .lado h2 { color: #175FAA; font-weight: 700; font-size: 1.2rem; margin: 0 0 4px; }
+  .lado .sub { font-size: .8rem; margin: 0 0 12px; }
+  .bloco { border-top: 1px solid #C9DAEE; padding-top: 14px; margin-top: 14px; }
+  .bloco h3 { color: #175FAA; font-weight: 700; font-size: .95rem; margin: 0 0 2px; }
+  .bloco .dica { font-size: .78rem; margin: 0 0 8px; }
+  .item { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin-bottom: 8px; }
+  .item.ligado { grid-template-columns: 1fr auto; }
+  .item .liga { grid-column: 1 / 2; font-size: .8rem; }
+  .item .liga select { padding: 6px 8px; font-size: .8rem; }
+
+  /* Acções */
+  .accoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .aviso { font-size: .8rem; color: #E2EEFF; margin-top: 12px; }
+  .feedback { font-size: .85rem; color: #74D1EF; font-weight: 600; align-self: center; }
+
+  /* Rodapé */
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #4D85C2; font-size: 12px; color: #E2EEFF; }
+
+  /* Telemóvel: tudo em coluna, perfil do cliente primeiro */
+  @media (max-width: 640px) {
+    h1 { font-size: 1.6rem; }
+    .topo, .canvas, .resultado { grid-template-columns: 1fr; }
+    .perfil { order: -1; }
+    .encaixe-numero { font-size: 3.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="pagina">
+
+  <header>
+    <h1>Canvas de proposta de valor</h1>
+    <div class="barra"></div>
+    <p class="intro">Para equipas da JUNITEC testarem se uma oferta resolve o que o cliente precisa. Descrevam o cliente à direita, a oferta à esquerda, e liguem cada aliviador a uma dor e cada criador a um ganho.</p>
+  </header>
+
+  <section class="topo">
+    <div>
+      <label for="oferta">Oferta</label>
+      <input id="oferta" placeholder="Ex.: Diagnóstico digital express">
+    </div>
+    <div>
+      <label for="segmento">Segmento de clientes</label>
+      <input id="segmento" placeholder="Ex.: Donos de PME de restauração">
+    </div>
+  </section>
+
+  <section class="resultado" aria-live="polite">
+    <div>
+      <div class="encaixe-numero" id="encaixe">0%</div>
+      <div class="encaixe-legenda" id="encaixe-legenda">de encaixe</div>
+    </div>
+    <div>
+      <p class="frase" id="frase"></p>
+      <p class="por-cobrir" id="por-cobrir"></p>
+    </div>
+  </section>
+
+  <section class="canvas">
+    <div class="lado mapa">
+      <h2>Mapa de valor</h2>
+      <p class="sub">O que a nossa oferta faz.</p>
+      <div class="bloco" data-bloco="produtos"></div>
+      <div class="bloco" data-bloco="aliviadores"></div>
+      <div class="bloco" data-bloco="criadores"></div>
+    </div>
+    <div class="lado perfil">
+      <h2>Perfil do cliente</h2>
+      <p class="sub">O que o cliente quer fazer, o que o incomoda e o que valoriza.</p>
+      <div class="bloco" data-bloco="tarefas"></div>
+      <div class="bloco" data-bloco="dores"></div>
+      <div class="bloco" data-bloco="ganhos"></div>
+    </div>
+  </section>
+
+  <div class="accoes">
+    <button class="btn-principal" id="copiar">Copiar resultado</button>
+    <button class="btn-contorno" id="descarregar">Descarregar .txt</button>
+    <button class="btn-contorno" id="exemplo">Repor exemplo</button>
+    <button class="btn-contorno" id="limpar">Limpar tudo</button>
+    <span class="feedback" id="feedback"></span>
+  </div>
+  <p class="aviso">O canvas fica guardado só neste browser (localStorage). Nada é enviado para nenhum servidor.</p>
+
+  <footer>Feito pela JUNITEC</footer>
+</div>
+
+<script>
+// ---------- Configuração dos blocos ----------
+const BLOCOS = {
+  tarefas:     { titulo: 'Tarefas do cliente', dica: 'O que o cliente está a tentar fazer.', vazio: 'Ex.: Gerir reservas' },
+  dores:       { titulo: 'Dores', dica: 'O que o irrita, trava ou custa caro.', vazio: 'Ex.: Perde reservas por telefone' },
+  ganhos:      { titulo: 'Ganhos', dica: 'Os resultados que espera ou que o surpreenderiam.', vazio: 'Ex.: Mais clientes ao fim-de-semana' },
+  produtos:    { titulo: 'Produtos e serviços', dica: 'O que entregamos.', vazio: 'Ex.: Diagnóstico de 2 horas' },
+  aliviadores: { titulo: 'Aliviadores de dores', dica: 'Como a oferta reduz uma dor. Escolham qual.', vazio: 'Ex.: Reservas online simples', liga: 'dores', verbo: 'Alivia' },
+  criadores:   { titulo: 'Criadores de ganhos', dica: 'Como a oferta cria um ganho. Escolham qual.', vazio: 'Ex.: Campanha local no Instagram', liga: 'ganhos', verbo: 'Cria' }
+};
+const CHAVE = 'junitec-proposta-valor';
+
+// ---------- Exemplo (dados fictícios) ----------
+function criarExemplo() {
+  return {
+    oferta: 'Diagnóstico digital express (exemplo)',
+    segmento: 'donos de PME de restauração (exemplo)',
+    tarefas: [item('Gerir reservas e encomendas'), item('Atrair clientes novos')],
+    dores: [item('Perde reservas por telefone', 'd1'), item('Não sabe que ferramentas digitais escolher', 'd2'), item('Pouco tempo para aprender coisas novas', 'd3')],
+    ganhos: [item('Mais clientes ao fim-de-semana', 'g1'), item('Saber quanto vai gastar antes de começar', 'g2'), item('Ver resultados em poucas semanas', 'g3')],
+    produtos: [item('Diagnóstico de 2 horas no restaurante'), item('Relatório com plano de 90 dias')],
+    aliviadores: [item('Sistema de reservas online já configurado', null, 'd1'), item('Comparação de 3 ferramentas com preços', null, 'd2')],
+    criadores: [item('Campanha local no Instagram', null, 'g1'), item('Orçamento fechado por fase', null, 'g2')]
+  };
+}
+
+function criarVazio() {
+  const vazio = { oferta: '', segmento: '' };
+  Object.keys(BLOCOS).forEach(b => vazio[b] = [item('')]);
+  return vazio;
+}
+
+function item(texto, id, liga) {
+  return { id: id || novoId(), texto, liga: liga || '' };
+}
+
+function novoId() {
+  return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+// ---------- Estado e gravação ----------
+let estado = carregar();
+
+function carregar() {
+  try {
+    const guardado = JSON.parse(localStorage.getItem(CHAVE));
+    if (guardado && guardado.dores) return guardado;
+  } catch (e) { /* sem localStorage: usa o exemplo */ }
+  return criarExemplo();
+}
+
+function guardar() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) { /* ignora */ }
+}
+
+// ---------- Cálculo do encaixe ----------
+function preenchidos(bloco) {
+  return estado[bloco].filter(i => i.texto.trim());
+}
+
+function cobertos(blocoAlvo, blocoLiga) {
+  const ligados = new Set(preenchidos(blocoLiga).map(i => i.liga).filter(Boolean));
+  return preenchidos(blocoAlvo).filter(i => ligados.has(i.id));
+}
+
+function calcularEncaixe() {
+  const total = preenchidos('dores').length + preenchidos('ganhos').length;
+  const doresCobertas = cobertos('dores', 'aliviadores');
+  const ganhosCobertos = cobertos('ganhos', 'criadores');
+  const feitos = doresCobertas.length + ganhosCobertos.length;
+  return {
+    total, feitos, doresCobertas, ganhosCobertos,
+    percentagem: total ? Math.round(feitos / total * 100) : 0,
+    doresPorCobrir: preenchidos('dores').filter(d => !doresCobertas.includes(d)),
+    ganhosPorCobrir: preenchidos('ganhos').filter(g => !ganhosCobertos.includes(g))
+  };
+}
+
+function minuscula(texto) {
+  return texto ? texto.charAt(0).toLowerCase() + texto.slice(1) : texto;
+}
+
+function construirFrase(r) {
+  const oferta = estado.oferta.trim() || 'A nossa oferta';
+  const segmento = estado.segmento.trim() || 'os nossos clientes';
+  const tarefa = preenchidos('tarefas')[0];
+  const dor = r.doresCobertas[0];
+  const ganho = r.ganhosCobertos[0];
+  let frase = `${oferta} ajuda ${minuscula(segmento)}`;
+  if (tarefa) frase += ` a ${minuscula(tarefa.texto)}`;
+  frase += '.';
+  if (dor) frase += ` Resolve: ${minuscula(dor.texto)}.`;
+  if (ganho) frase += ` Traz: ${minuscula(ganho.texto)}.`;
+  return frase;
+}
+
+// ---------- Interface: blocos ----------
+function desenharBlocos() {
+  Object.keys(BLOCOS).forEach(desenharBloco);
+}
+
+function desenharBloco(nome) {
+  const cfg = BLOCOS[nome];
+  const caixa = document.querySelector(`[data-bloco="${nome}"]`);
+  caixa.innerHTML = '';
+
+  const h3 = document.createElement('h3');
+  h3.textContent = cfg.titulo;
+  const dica = document.createElement('p');
+  dica.className = 'dica';
+  dica.textContent = cfg.dica;
+  caixa.append(h3, dica);
+
+  estado[nome].forEach(it => caixa.append(criarLinha(nome, it)));
+
+  const adicionar = document.createElement('button');
+  adicionar.className = 'btn-adicionar';
+  adicionar.textContent = '+ Acrescentar';
+  adicionar.onclick = () => {
+    const novo = item('');
+    estado[nome].push(novo);
+    guardar();
+    desenharBloco(nome);
+    caixa.querySelector(`[data-id="${novo.id}"]`).focus();
+    atualizarResultado();
+  };
+  caixa.append(adicionar);
+}
+
+function criarLinha(nome, it) {
+  const cfg = BLOCOS[nome];
+  const linha = document.createElement('div');
+  linha.className = 'item';
+
+  const campo = document.createElement('input');
+  campo.value = it.texto;
+  campo.placeholder = cfg.vazio;
+  campo.dataset.id = it.id;
+  campo.setAttribute('aria-label', cfg.titulo);
+  campo.oninput = () => {
+    it.texto = campo.value;
+    guardar();
+    atualizarOpcoes();
+    atualizarResultado();
+  };
+
+  const remover = document.createElement('button');
+  remover.className = 'btn-remover';
+  remover.textContent = '×';
+  remover.title = 'Remover';
+  remover.setAttribute('aria-label', 'Remover');
+  remover.onclick = () => {
+    estado[nome] = estado[nome].filter(x => x.id !== it.id);
+    limparLigacoes(it.id);
+    guardar();
+    desenharBlocos();
+    atualizarResultado();
+  };
+
+  linha.append(campo, remover);
+
+  // Aliviadores e criadores ligam-se a uma dor ou a um ganho
+  if (cfg.liga) {
+    const liga = document.createElement('label');
+    liga.className = 'liga';
+    const seletor = document.createElement('select');
+    seletor.dataset.liga = cfg.liga;
+    seletor.dataset.id = it.id;
+    seletor.setAttribute('aria-label', `${cfg.verbo} qual?`);
+    seletor.onchange = () => {
+      it.liga = seletor.value;
+      guardar();
+      atualizarResultado();
+    };
+    liga.append(seletor);
+    linha.append(liga);
+    preencherOpcoes(seletor, nome, it);
+  }
+  return linha;
+}
+
+function preencherOpcoes(seletor, nome, it) {
+  const cfg = BLOCOS[nome];
+  seletor.innerHTML = '';
+  const nenhuma = new Option(`${cfg.verbo}: (escolher)`, '');
+  seletor.append(nenhuma);
+  preenchidos(cfg.liga).forEach(alvo => {
+    seletor.append(new Option(`${cfg.verbo}: ${alvo.texto}`, alvo.id));
+  });
+  seletor.value = it.liga && preenchidos(cfg.liga).some(a => a.id === it.liga) ? it.liga : '';
+}
+
+// Actualiza só as listas de escolha, sem tirar o foco a quem está a escrever
+function atualizarOpcoes() {
+  ['aliviadores', 'criadores'].forEach(nome => {
+    estado[nome].forEach(it => {
+      const seletor = document.querySelector(`select[data-id="${it.id}"]`);
+      if (seletor) preencherOpcoes(seletor, nome, it);
+    });
+  });
+}
+
+function limparLigacoes(id) {
+  ['aliviadores', 'criadores'].forEach(nome => {
+    estado[nome].forEach(it => { if (it.liga === id) it.liga = ''; });
+  });
+}
+
+// ---------- Interface: resultado ----------
+function atualizarResultado() {
+  const r = calcularEncaixe();
+  document.getElementById('encaixe').textContent = r.percentagem + '%';
+  document.getElementById('encaixe-legenda').textContent =
+    r.total ? `de encaixe · ${r.feitos} de ${r.total} dores e ganhos cobertos` : 'de encaixe · acrescentem dores e ganhos';
+  document.getElementById('frase').textContent = construirFrase(r);
+
+  const faltam = [...r.doresPorCobrir.map(d => 'dor: ' + d.texto), ...r.ganhosPorCobrir.map(g => 'ganho: ' + g.texto)];
+  document.getElementById('por-cobrir').textContent = faltam.length
+    ? 'Por cobrir → ' + faltam.join(' · ')
+    : (r.total ? 'Todas as dores e ganhos têm resposta.' : '');
+}
+
+// ---------- Exportar em texto ----------
+function textoExportado() {
+  const r = calcularEncaixe();
+  const nomeDe = (bloco, id) => (preenchidos(bloco).find(x => x.id === id) || {}).texto;
+  const lista = nome => {
+    const cfg = BLOCOS[nome];
+    const linhas = preenchidos(nome).map(it => {
+      const alvo = cfg.liga && it.liga ? nomeDe(cfg.liga, it.liga) : '';
+      return '- ' + it.texto + (alvo ? `  → ${cfg.verbo.toLowerCase()}: ${alvo}` : '');
+    });
+    return `${cfg.titulo}\n${linhas.length ? linhas.join('\n') : '- (vazio)'}`;
+  };
+  return [
+    'PROPOSTA DE VALOR',
+    `Oferta: ${estado.oferta.trim() || '(sem nome)'}`,
+    `Segmento: ${estado.segmento.trim() || '(sem segmento)'}`,
+    `Encaixe: ${r.percentagem}% (${r.feitos} de ${r.total} dores e ganhos cobertos)`,
+    '',
+    construirFrase(r),
+    '',
+    'PERFIL DO CLIENTE',
+    lista('tarefas'), lista('dores'), lista('ganhos'),
+    '',
+    'MAPA DE VALOR',
+    lista('produtos'), lista('aliviadores'), lista('criadores'),
+    '',
+    'Feito com o canvas de proposta de valor da JUNITEC'
+  ].join('\n');
+}
+
+function mostrarFeedback(msg) {
+  const el = document.getElementById('feedback');
+  el.textContent = msg;
+  clearTimeout(mostrarFeedback.t);
+  mostrarFeedback.t = setTimeout(() => el.textContent = '', 2500);
+}
+
+async function copiar() {
+  const texto = textoExportado();
+  try {
+    await navigator.clipboard.writeText(texto);
+  } catch (e) {
+    // Alternativa para browsers sem acesso à área de transferência
+    const area = document.createElement('textarea');
+    area.value = texto;
+    document.body.append(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  mostrarFeedback('Copiado!');
+}
+
+function descarregar() {
+  const blob = new Blob([textoExportado()], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'proposta-de-valor.txt';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  mostrarFeedback('Ficheiro descarregado.');
+}
+
+// ---------- Arranque ----------
+function aplicarEstado() {
+  document.getElementById('oferta').value = estado.oferta;
+  document.getElementById('segmento').value = estado.segmento;
+  desenharBlocos();
+  atualizarResultado();
+}
+
+['oferta', 'segmento'].forEach(campo => {
+  document.getElementById(campo).oninput = e => {
+    estado[campo] = e.target.value;
+    guardar();
+    atualizarResultado();
+  };
+});
+
+document.getElementById('copiar').onclick = copiar;
+document.getElementById('descarregar').onclick = descarregar;
+document.getElementById('exemplo').onclick = () => {
+  estado = criarExemplo();
+  guardar();
+  aplicarEstado();
+  mostrarFeedback('Exemplo reposto.');
+};
+document.getElementById('limpar').onclick = () => {
+  if (!confirm('Apagar todo o canvas?')) return;
+  estado = criarVazio();
+  guardar();
+  aplicarEstado();
+  mostrarFeedback('Canvas limpo.');
+};
+
+aplicarEstado();
+</script>
+</body>
+</html>
